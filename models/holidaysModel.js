@@ -2,11 +2,11 @@ const db = require('../config/db')
 const messages = require('../config/messages')
 
 
-class DeppartmentModel {
+class HolidayModel {
 
-    static async getDepartmentAll() {
+    static async getHolidayAll() {
         try {
-            const [result] = await db.query('SELECT * FROM department');
+            const [result] = await db.query('SELECT * FROM holiday');
             if (result) {
                 return result;
             } else {
@@ -18,4 +18,4 @@ class DeppartmentModel {
     }
 }
 
-module.exports = DeppartmentModel;
+module.exports = HolidayModel;

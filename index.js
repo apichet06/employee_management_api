@@ -8,7 +8,10 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
 const departments = require('./routes/departmentRoutes')
-app.use('/api/departmentAll', departments)
+const holidays = require('./routes/holidayRoutes')
+
+app.use('/api/holidayall', holidays)
+app.use('/api/departmentall', departments)
 
 
 app.get('/', (req, res) => {
