@@ -9,7 +9,9 @@ app.use(express.urlencoded({ extended: false }));
 
 const departments = require('./routes/departmentRoutes')
 const holidays = require('./routes/holidayRoutes')
+const websites = require('./routes/webseiteRoutes')
 
+app.use('/api/websiteall', websites)
 app.use('/api/holidayall', holidays)
 app.use('/api/departmentall', departments)
 

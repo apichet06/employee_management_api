@@ -2,11 +2,13 @@ const db = require('../config/db')
 const messages = require('../config/messages')
 
 
-class HolidayModel {
+class WebsiteModel {
 
-    static async getHolidayAll() {
+    static async getWebsiteAll() {
         try {
-            const [result] = await db.query('SELECT * FROM holiday order by h_start_date desc');
+            const [result] = await db.query(`SELECT a.*,b.e_firstname FROM website a
+                left join employees b on a.e_id = b.e_id
+                order by w_id asc`);
             if (result) {
                 return result;
             } else {
@@ -18,4 +20,4 @@ class HolidayModel {
     }
 }
 
-module.exports = HolidayModel;
+module.exports = WebsiteModel;
