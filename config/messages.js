@@ -11,7 +11,7 @@ class Messages {
 
     static UndeleteUser = "ไม่สามารถลบข้อมูลที่เป็นแอดมินหลักได้!"
     static idNotFound = "ไม่พบรหัสที่ระบุครับ!";
-    static userNotFound = "ไม่พบข้อมูลผู้ใช้";
+    static userNotFound = "ไม่พบข้อมูลผู้ใช้ระบบหากจำเป็นติดต่อ IT";
     static notFound = "ไม่พบข้อมูล";
     static repeatEmail = "Email นี้มีอยู่แล้ว!";
     static used = "ไม่สามารถลบได้,ข้อมูลนี้ใช้งานอยู่"

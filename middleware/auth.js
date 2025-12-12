@@ -1,21 +1,25 @@
 const jwt = require('jsonwebtoken');
 const Messages = require('../config/messages');
-require('dotenv');
+require('dotenv').config()
 
-class auth {
+class Auth {
     static async authenticateToken(req, res, next) {
-        const token = req.headers['authorization']?.split(' ')[1];
-        if (!token) {
-            return res.status(401).json({ status: Messages.error, Message: Messages.notToken });
-        }
+        const authHeader = req.headers["authorization"];
+
+        if (!authHeader) return res.status(401).json({ status: Messages.error, message: Messages.notToken });
+
+        const token = authHeader.split(" ")[1]; // Bearer token
+
+        if (!token) return res.status(401).json({ status: Messages.error, message: Messages.notToken });
+
         jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
-            if (err) {
-                return res.status(403).json({ status: Messages.error, Message: Messages.invalidToken });
-            }
-            req.userId = decoded.userId;
+            if (err) return res.status(403).json({ status: Messages.error, message: Messages.invalidToken });
+
+            req.user = decoded;
+
             next();
         });
     }
 }
 
-module.exports = auth;
+module.exports = Auth;
