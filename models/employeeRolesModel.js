@@ -1,3 +1,5 @@
+const db = require("../config/db");
+
 class EmployeeRolesModel {
 
     static async employeeRolesAll() {
@@ -10,9 +12,9 @@ class EmployeeRolesModel {
                 inner join employees d 
                 on a.e_id = d.e_id
                  `);
-            if (result) {
+            if (result)
                 return result;
-            }
+
 
         } catch (error) {
             throw error;

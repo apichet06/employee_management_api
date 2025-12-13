@@ -1,17 +1,13 @@
-const db = require('../config/db')
-const messages = require('../config/messages')
-
+const db = require('../config/db');
 
 class HolidayModel {
 
     static async getHolidayAll() {
         try {
             const [result] = await db.query('SELECT * FROM holiday order by h_start_date desc');
-            if (result) {
+            if (result)
                 return result;
-            } else {
-                throw new Error(Messages.notFound) + messages.error500
-            }
+
         } catch (error) {
             throw error;
         }

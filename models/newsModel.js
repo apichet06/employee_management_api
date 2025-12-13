@@ -1,5 +1,4 @@
 const db = require('../config/db')
-const messages = require('../config/messages')
 
 
 class NewsModel {
@@ -9,11 +8,9 @@ class NewsModel {
             const [result] = await db.query(`SELECT a.*,b.e_firstname FROM news a
                 left join employees b on a.e_id = b.e_id
                 order by n_datetime desc`);
-            if (result) {
+            if (result)
                 return result;
-            } else {
-                throw new Error(Messages.notFound) + messages.error500
-            }
+
         } catch (error) {
             throw error;
         }

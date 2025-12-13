@@ -22,6 +22,7 @@ class Messages {
     static dataUnlinkError = "ไม่สามารถลบไฟล์ได้!";
     static dataUnlinkSuccess = "ลบไฟล์สำเร็จ!";
     static invalidToken = "Invalid token, โทเค็นไม่ถูกต้อง";
+    static expiredToken = "Token หมดอายุ กรุณาเข้าสู่ระบบใหม่";
     static notToken = "Authentication token is missing, ไม่มีโทเค็นการตรวจสอบสิทธิ์";
 
 }
