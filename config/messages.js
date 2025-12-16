@@ -24,7 +24,7 @@ class Messages {
     static invalidToken = "Invalid token, โทเค็นไม่ถูกต้อง";
     static expiredToken = "Token หมดอายุ กรุณาเข้าสู่ระบบใหม่";
     static notToken = "Authentication token is missing, ไม่มีโทเค็นการตรวจสอบสิทธิ์";
-
+    static inUseCannotDelete = "ข้อมูลนี้ถูกใช้อยู่ไม่สามารถลบได้"
 }
 
 module.exports = Messages

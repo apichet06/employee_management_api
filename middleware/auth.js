@@ -13,11 +13,12 @@ class Auth {
         if (!token) return res.status(401).json({ status: Messages.error, message: Messages.notToken });
 
         jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
-            if (err.name === "TokenExpiredError") {
-                return res.status(401).json({ status: Messages.error, message: Messages.expiredToken });
+            if (err) {
+                if (err.name === "TokenExpiredError") {
+                    return res.status(401).json({ status: Messages.error, message: Messages.expiredToken });
+                }
+                return res.status(403).json({ status: Messages.error, message: Messages.invalidToken });
             }
-            if (err) return res.status(403).json({ status: Messages.error, message: Messages.invalidToken });
-
             req.user = decoded;
 
             next();

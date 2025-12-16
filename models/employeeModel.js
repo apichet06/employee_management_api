@@ -6,7 +6,7 @@ class EmployeeModel {
 
         try {
             const [result] = await db.query(`SELECT a.*,c.w_name,d.e_fullname,d.e_usercode,d.e_password,b.r_role,b.r_id,
-                e.d_department,d_department_th,f.p_name,f.p_name_th,d.e_image,d.e_email
+                e.d_department,d_department_th,f.p_name,f.p_name_th,d.e_image,d.e_email,d.e_id as e_id
                 FROM employee_roles a
                 right join roles b 
                 on a.r_id = b.r_id

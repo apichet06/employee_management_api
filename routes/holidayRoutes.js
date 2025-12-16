@@ -3,7 +3,7 @@ const multer = require('multer');
 const holidayController = require('../controllers/holidaysController')
 
 const router = express.Router()
-const upload = multer({ dest: 'uploads/' });
+const upload = multer({ dest: 'public/uploads/' });
 
 
 router.get('/', holidayController.getHoliday)

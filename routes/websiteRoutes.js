@@ -2,7 +2,7 @@ const express = require('express')
 const WebsiteController = require('../controllers/websiteController')
 
 const multer = require('multer');
-const upload = multer({ dest: 'uploads/' })
+const upload = multer({ dest: 'public/uploads/' })
 
 const routes = express.Router()
 routes.get('/', WebsiteController.getWebsite)

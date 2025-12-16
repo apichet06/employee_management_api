@@ -14,7 +14,7 @@ const news = require('./routes/newRoutes')
 const employeeRoutes = require('./routes/employeesRoutes')
 
 
-app.use("/api/uploads", express.static(path.join(__dirname, "uploads")));
+app.use("/api/uploads", express.static(path.join(__dirname, "public/uploads")));
 app.use('/api/website', websites)
 app.use('/api/holiday', holidays)
 app.use('/api/department', departments)
