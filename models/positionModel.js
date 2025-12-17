@@ -1,0 +1,54 @@
+const db = require("../config/db");
+
+
+class PositionModel {
+
+    static async getpositionAll() {
+        try {
+            const [result] = await db.query('SELECT * FROM position');
+            if (result)
+                return result;
+
+        } catch (error) {
+            throw error;
+        }
+    }
+    static async create(reqData) {
+        try {
+            console.log(reqData);
+
+            const [result] = await db.query(
+                'INSERT INTO `positions` (`p_name`, `p_name_th`) VALUES (?, ?)',
+                reqData
+            );
+
+            return result;
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    static async update(reqData) {
+        try {
+            const [result] = await db.query(`UPDATE positions SET p_name = ?, p_name_th = ? WHERE p_id = ?`, reqData);
+            return result;
+
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    static async delete(reqData) {
+        try {
+
+            const [result] = await db.query(`DELETE FROM positions WHERE p_id = ?`, reqData)
+            return result;
+
+        } catch (error) {
+            throw error;
+        }
+    }
+
+}
+
+module.exports = PositionModel;

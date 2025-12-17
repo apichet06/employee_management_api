@@ -16,7 +16,7 @@ class EmployeeModel {
                 on a.e_id = d.e_id
                 right join department e 
                 on d.d_id = e.d_id
-                right join position f 
+                right join positions f 
                 on d.p_id = f.p_id
                 Where d.e_usercode = ? LIMIT 1`, [usercode])
 

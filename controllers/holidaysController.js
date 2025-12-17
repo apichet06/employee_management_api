@@ -77,7 +77,6 @@ class HolidayController {
                             const h_start_date = toSqlDate(row.h_start_date);
                             const h_end_date = toSqlDate(row.h_end_date);
 
-
                             const reqData = [
                                 h_name,
                                 h_holiday_status,
@@ -92,10 +91,7 @@ class HolidayController {
                         // ลบไฟล์ชั่วคราวทิ้ง
                         fs.unlinkSync(filePath);
 
-                        res.status(200).json({
-                            status: Messages.ok,
-                            message: `Import สำเร็จ ${rows.length} รายการ`
-                        });
+                        res.status(200).json({ status: Messages.ok, message: `Import สำเร็จ ${rows.length} รายการ` });
                     } catch (err) {
                         res.status(500).json({ status: Messages.error500, message: err.message });
                     }

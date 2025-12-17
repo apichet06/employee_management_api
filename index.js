@@ -12,6 +12,8 @@ const holidays = require('./routes/holidayRoutes')
 const websites = require('./routes/websiteRoutes')
 const news = require('./routes/newRoutes')
 const employeeRoutes = require('./routes/employeesRoutes')
+const positionRoutes = require('./routes/positoinRoutes')
+
 
 
 app.use("/api/uploads", express.static(path.join(__dirname, "public/uploads")));
@@ -20,6 +22,7 @@ app.use('/api/holiday', holidays)
 app.use('/api/department', departments)
 app.use('/api/news', news)
 app.use("/api/employee", employeeRoutes);
+app.use("/api/position", positionRoutes);
 
 app.get('/', (req, res) => {
     res.send('Hello World!')
