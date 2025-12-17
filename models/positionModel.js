@@ -5,7 +5,7 @@ class PositionModel {
 
     static async getpositionAll() {
         try {
-            const [result] = await db.query('SELECT * FROM position');
+            const [result] = await db.query('SELECT * FROM positions');
             if (result)
                 return result;
 
@@ -15,7 +15,6 @@ class PositionModel {
     }
     static async create(reqData) {
         try {
-            console.log(reqData);
 
             const [result] = await db.query(
                 'INSERT INTO `positions` (`p_name`, `p_name_th`) VALUES (?, ?)',
