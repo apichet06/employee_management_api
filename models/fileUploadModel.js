@@ -2,19 +2,20 @@ const fs = require('fs');
 const path = require('path');
 
 
-class FileUplood {
+class FileUpload {
     static async uploadFile(file, keys, folder) {
         const currentDate = new Date();
         const year = currentDate.getFullYear();
         const month = (currentDate.getMonth() + 1).toString().padStart(2, '0');
-        const folderPath = `public/uploads/${folder}/${year}${month}`;
-        const modifiedFileName = `${keys}${path.extname(file.originalname)}`;
-        const filePath = path.join(folderPath, modifiedFileName);
+        const relativePath = `uploads/${folder}/${year}${month}`;
+        const folderPath = path.join('public/', relativePath);
+        const fileName = `${keys}${path.extname(file.originalname)}`;
+        const filePath = path.join(folderPath, fileName);
         fs.mkdirSync(folderPath, { recursive: true });
         fs.renameSync(file.path, filePath);
 
-        return filePath;
+        return `${relativePath}/${fileName}`;
     }
 }
 
-module.exports = FileUplood;
+module.exports = FileUpload;

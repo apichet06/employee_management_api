@@ -1,6 +1,7 @@
 const Messages = require("../config/messages");
 const EmployeeModel = require("../models/employeeModel");
 const jwt = require('jsonwebtoken');
+const FileUpload = require("../models/fileUploadModel");
 const fs = require("fs").promises;
 
 class EmployeeController {
@@ -43,17 +44,14 @@ class EmployeeController {
             const {
                 e_title, e_title_th, e_firstname, e_lastname, e_firstname_th,
                 e_lastname_th, d_id, e_work_start_date, p_id, wp_id, e_email,
-                e_phone, e_image, e_status, e_user_line_id,
-                e_add_name, e_blood_group, e_weight, e_high,
+                e_phone, e_status, e_user_line_id, e_blood_group, e_weight, e_high,
                 e_medical_condition, e_hypersensitivity, e_incise, e_parent_id } = req.body
             const file = req.file;
             const folder = 'employee';
 
-
             const e_fullname = e_title + e_firstname + " " + e_lastname;
             const e_fullname_th = e_title_th + e_firstname_th + " " + e_lastname_th;
-
-
+            const e_add_name = req.user.userId;
             const exists = await EmployeeModel.getByFullName(e_fullname);
 
             if (exists) {
@@ -61,17 +59,23 @@ class EmployeeController {
                 if (file) {
                     fs.unlink(file.path);
                 }
-                return res.status(400).json({ status: 'error', message: Messages.exists + exists.w_name });
+                return res.status(400).json({ status: 'error', message: Messages.exists + exists.e_fullname });
             }
-
+            let imagePath = null;
+            if (file) {
+                const uploadedPath = await FileUpload.uploadFile(file, `main_${Date.now()}`, folder);
+                //   แปลงเป็น '/' ให้เรียบร้อยก่อนเก็บลง DB
+                imagePath = uploadedPath.replace(/\\/g, '/');
+            }
 
             const reqData = [
                 e_title, e_title_th, e_firstname, e_lastname, e_fullname,
                 e_firstname_th, e_lastname_th, e_fullname_th, d_id,
-                e_work_start_date, p_id, wp_id, e_email, e_phone, e_image,
+                e_work_start_date, p_id, wp_id, e_email, e_phone, imagePath,
                 e_status, e_user_line_id, e_add_name, e_blood_group,
                 e_weight, e_high, e_medical_condition, e_hypersensitivity,
                 e_incise, e_parent_id]
+
 
             const employee = await EmployeeModel.create(reqData)
             res.status(200).json({ status: Messages.ok, message: Messages.insertSuccess, data: employee })
@@ -122,8 +126,7 @@ class EmployeeController {
                 e_hypersensitivity,
                 e_incise,
                 e_parent_id,
-                e_id,
-            ];
+                e_id];
             const employee = await EmployeeModel.update(reqData)
             res.status(200).json({ status: Messages.ok, message: Messages.updateSuccess, data: employee })
         } catch (error) {

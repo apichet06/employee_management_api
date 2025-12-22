@@ -34,16 +34,20 @@ class EmployeeModel {
             const [result] = await db.query(`SELECT
                             a.*,
                             b.d_department, b.d_department_th,
-                            c.p_name  AS emp_p_name,  c.p_name_th  AS emp_p_name_th,
+                            c.p_name AS emp_p_name,c.p_name_th AS emp_p_name_th,
                             d.wp_name, d.wp_name_th,
                             sup.e_firstname AS sup_firstname,
-                            f.p_name  AS sup_p_name,  f.p_name_th  AS sup_p_name_th
+                            f.p_name AS sup_p_name,f.p_name_th AS sup_p_name_th,
+                            ads.e_firstname AS add_name,upd.e_firstname AS upd_name
                             FROM employees a
                             JOIN department b  ON a.d_id  = b.d_id
                             JOIN positions  c  ON a.p_id  = c.p_id
                             JOIN workplace  d  ON a.wp_id = d.wp_id
                             LEFT JOIN employees sup ON sup.e_id = a.e_parent_id
-                            LEFT JOIN positions f   ON f.p_id   = sup.p_id;
+                            LEFT JOIN positions f  ON f.p_id   = sup.p_id
+                            LEFT JOIN employees ads ON ads.e_id = a.e_add_name
+                            LEFT JOIN employees upd ON upd.e_id = a.e_upd_name
+                            ORDER BY  a.e_id desc
                             `);
             if (result)
                 return result;
@@ -110,7 +114,7 @@ class EmployeeModel {
                 e_hypersensitivity,
                 e_incise,
                 e_parent_id) 
-                VALUES( ?, ?,?,?,?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?,? )`, finalReqData);
+                VALUES( ?, ?,?,?,?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`, finalReqData);
             return result;
 
         } catch (error) {
