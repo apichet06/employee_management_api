@@ -13,6 +13,7 @@ const websites = require('./routes/websiteRoutes')
 const news = require('./routes/newRoutes')
 const employeeRoutes = require('./routes/employeesRoutes')
 const positionRoutes = require('./routes/positoinRoutes')
+const workplaceRoutes = require('./routes/workplaceRoutes')
 
 
 
@@ -23,6 +24,7 @@ app.use('/api/department', departments)
 app.use('/api/news', news)
 app.use("/api/employee", employeeRoutes);
 app.use("/api/position", positionRoutes);
+app.use("/api/workplace", workplaceRoutes);
 
 app.get('/', (req, res) => {
     res.send('Hello World!')
