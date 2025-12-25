@@ -38,7 +38,7 @@ class EmployeeModel {
                             d.wp_name, d.wp_name_th,
                             sup.e_firstname AS sup_firstname,
                             f.p_name AS sup_p_name,f.p_name_th AS sup_p_name_th,
-                            ads.e_firstname AS add_name,upd.e_firstname AS upd_name
+                            ads.e_firstname AS add_name,upd.e_firstname AS upd_name,sup.p_id AS sup_p_id
                             FROM employees a
                             JOIN department b  ON a.d_id  = b.d_id
                             JOIN positions  c  ON a.p_id  = c.p_id
@@ -57,14 +57,7 @@ class EmployeeModel {
         }
     }
 
-    static async buildEmployeePrefix(e_work_start_date) {
-        const date = new Date(e_work_start_date);
-        const buddhistYear = date.getFullYear() + 543; // 2568
-        const yy = String(buddhistYear).slice(-2);     // "68"
 
-        const mm = String(date.getMonth() + 1).padStart(2, "0"); // "12" 
-        return `${yy}${mm}`; // "6812"
-    }
 
 
     static async getEmployeeMaxId() {
@@ -77,44 +70,33 @@ class EmployeeModel {
         }
     }
 
+    static async buildEmployeePrefix(e_work_start_date) {
+        const date = new Date(e_work_start_date);
+        const buddhistYear = date.getFullYear() + 543; // 2568
+        const yy = String(buddhistYear).slice(-2);     // "68" 
+        const mm = String(date.getMonth() + 1).padStart(2, "0"); // "12" 
+        const max = await EmployeeModel.getEmployeeMaxId();
+        const nextRunning = String(max + 1).padStart(3, "0");
+        return `${yy}${mm}${nextRunning}`; // "6812"
+    }
+
     static async create(reqData) {
         try {
-            const max = await EmployeeModel.getEmployeeMaxId();
-            const prefix = await EmployeeModel.buildEmployeePrefix(reqData[9]);
+            // const max = await EmployeeModel.getEmployeeMaxId();
+            // const prefix = await EmployeeModel.buildEmployeePrefix(reqData[13]);
 
-            const nextRunning = String(max + 1).padStart(3, "0");
-            const e_usercode = `${prefix}${nextRunning}`;
-            const finalReqData = [e_usercode, ...reqData];
+            // const nextRunning = String(max + 1).padStart(3, "0");
+            // const e_usercode = `${prefix}${nextRunning}`;
+            // const finalReqData = [e_usercode, ...reqData];
 
 
             const [result] = await db.query(`INSERT INTO employees  
-                ( e_usercode,
-                e_title,
-                e_title_th,
-                e_firstname,
-                e_lastname,
-                e_fullname,
-                 e_firstname_th,
-                e_lastname_th,
-                e_fullname_th,
-                d_id,
-                e_work_start_date,
-                p_id,
-                wp_id,
-                e_email,
-                e_phone,
-                e_image,
-                e_status,
-                e_user_line_id,
-                e_add_name,
-                e_blood_group,
-                e_weight,
-                e_high,
-                e_medical_condition,
-                e_hypersensitivity,
-                e_incise,
-                e_parent_id) 
-                VALUES( ?, ?,?,?,?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`, finalReqData);
+                ( e_usercode,e_password,title,e_title_th,e_firstname,e_lastname,e_fullname,
+                e_firstname_th,e_lastname_th,e_fullname_th,e_firstname_jp,e_lastname_jp, 
+                e_fullname_jp,e_birthday,d_id,e_work_start_date,p_id,wp_id,e_email,e_phone,
+                e_image,e_status,e_user_line_id,e_add_name,e_blood_group, e_weight,
+                e_high,e_medical_condition,e_hypersensitivity,e_incise,e_parent_id) 
+                VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`, reqData);
             return result;
 
         } catch (error) {
@@ -124,13 +106,14 @@ class EmployeeModel {
 
     static async update(reqData) {
         try {
-            console.log(reqData);
-            const [result] = await db.query(`UPDATE employees SET e_title = ?,
-                    e_firstname = ?, e_lastname = ?,
-                    e_fullname = ?, d_id = ?, e_work_start_date = ?, p_id = ?, wp_id = ?,
+            // console.log(reqData);
+            const [result] = await db.query(`UPDATE employees SET e_password = ?,e_title = ?,e_title_th = ?,
+                    e_firstname = ?, e_lastname = ?, e_fullname = ?, 
+                    e_firstname_th = ?, e_lastname_th = ?, e_fullname_th = ?,
+                    e_firstname_jp = ?, e_lastname_jp = ?, e_fullname_jp = ?,
+                    e_birthday = ?, d_id = ?, e_work_start_date = ?, p_id = ?, wp_id = ?,
                     e_email = ?, e_phone = ?, e_image = ?, e_status = ?, e_user_line_id = ?,
-                    e_upd_datetime = ?, e_upd_name = ?,
-                    e_blood_group = ?, e_weight = ?, e_high = ?,
+                    e_upd_datetime = ?, e_upd_name = ?, e_blood_group = ?, e_weight = ?, e_high = ?,
                     e_medical_condition = ?, e_hypersensitivity = ?, e_incise = ?,
                     e_parent_id = ? WHERE e_id = ?`, reqData);
             return result;
@@ -139,6 +122,16 @@ class EmployeeModel {
             throw error;
         }
 
+    }
+
+    static async ResetPassword(reqData) {
+        try {
+            const [result] = await db.query(`Update employees set e_password = ? where e_id = ?`, reqData);
+            return result;
+
+        } catch (error) {
+            throw error;
+        }
     }
 
     static async delete(reqData) {
@@ -161,6 +154,16 @@ class EmployeeModel {
             throw error;
         }
     }
+
+    static async getEmployeeById(id) {
+        try {
+            const [result] = await db.query(`SELECT * FROM employees WHERE e_id = ?`, [id]);
+            return result[0] || null;
+        } catch (error) {
+            throw error;
+        }
+    }
+
 
 
 }

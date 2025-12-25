@@ -30,7 +30,7 @@ class WorkplaceModel {
             const NextId = await this.generageMaxId()
             reqData.push(NextId)
 
-            const [result] = await db.query('INSERT INTO workplace (wp_name, wp_name_th, wp_plant) VALUES (?, ?, ?)', reqData
+            const [result] = await db.query('INSERT INTO workplace (wp_name, wp_name_th,wp_name_jp, wp_plant) VALUES (?, ?, ?)', reqData
             );
             return result;
 
@@ -42,7 +42,7 @@ class WorkplaceModel {
     static async update(reqData) {
         try {
 
-            const [result] = await db.query(`UPDATE workplace SET wp_name = ?, wp_name_th = ? WHERE wp_id = ?`, reqData);
+            const [result] = await db.query(`UPDATE workplace SET wp_name = ?, wp_name_th = ? , wp_name_jp = ? WHERE wp_id = ?`, reqData);
             return result;
 
         } catch (error) {

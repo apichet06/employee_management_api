@@ -19,6 +19,7 @@ class Messages {
     static error = "Error";
     static invalidPassword = "รหัสผ่านไม่ถูกต้อง!";
     static PasswordNotmatch = "รหัสผ่านเดิมไม่ถูกต้อง";
+    static ResetPwdSuccess = "รีเซ็ตรหัสผ่านสำเร็จ";
     static dataUnlinkError = "ไม่สามารถลบไฟล์ได้!";
     static dataUnlinkSuccess = "ลบไฟล์สำเร็จ!";
     static invalidToken = "Invalid token, โทเค็นไม่ถูกต้อง";

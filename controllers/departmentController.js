@@ -15,8 +15,8 @@ class DepartmentController {
     }
     static async createDepartment(req, res) {
         try {
-            const { d_department, d_department_th } = req.body;
-            const reqData = [d_department, d_department_th]
+            const { d_department, d_department_th, d_department_jp } = req.body;
+            const reqData = [d_department, d_department_th, d_department_jp]
 
             const department = await DeppartmentModel.create(reqData)
             res.status(200).json({ status: Messages.ok, message: Messages.insertSuccess, data: department })
@@ -30,9 +30,9 @@ class DepartmentController {
 
     static async updateDepartment(req, res) {
         try {
-            const { d_department, d_department_th, d_id } = req.body
+            const { d_department, d_department_th, d_department_jp, d_id } = req.body
 
-            const reqData = [d_department, d_department_th, d_id]
+            const reqData = [d_department, d_department_th, d_department_jp, d_id]
 
             const department = await DeppartmentModel.update(reqData)
 

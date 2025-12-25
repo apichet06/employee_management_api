@@ -17,7 +17,7 @@ class PositionModel {
         try {
 
             const [result] = await db.query(
-                'INSERT INTO `positions` (`p_name`, `p_name_th`) VALUES (?, ?)',
+                'INSERT INTO `positions` (`p_name`, `p_name_th`, `p_name_jp`) VALUES (?, ?)',
                 reqData
             );
 
@@ -29,7 +29,7 @@ class PositionModel {
 
     static async update(reqData) {
         try {
-            const [result] = await db.query(`UPDATE positions SET p_name = ?, p_name_th = ? WHERE p_id = ?`, reqData);
+            const [result] = await db.query(`UPDATE positions SET p_name = ?, p_name_th = ? , p_name_jp = ? WHERE p_id = ?`, reqData);
             return result;
 
         } catch (error) {

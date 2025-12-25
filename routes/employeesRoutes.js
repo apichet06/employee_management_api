@@ -11,6 +11,7 @@ router.get("/", EmployeeController.getEmployee);
 router.post("/", Auth.authenticateToken, upload.single('e_image'), EmployeeController.createEmployee);
 router.put("/:e_id", Auth.authenticateToken, upload.single('e_image'), EmployeeController.updateEmployee);
 router.delete("/:e_id", Auth.authenticateToken, EmployeeController.deleteEmployee);
+router.put("/reset-password/:e_id", Auth.authenticateToken, EmployeeController.resetPassword);
 
 module.exports = router
 

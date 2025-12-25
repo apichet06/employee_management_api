@@ -67,7 +67,7 @@ class WebsiteController {
             if (file) {
 
                 if (oldImagePath) {
-                    const fullOldPath = path.join(__dirname, "..", oldImagePath);
+                    const fullOldPath = path.join(process.cwd(), "public", oldImagePath)
                     try {
                         await fs.unlink(fullOldPath);
                     } catch (err) {
@@ -101,7 +101,7 @@ class WebsiteController {
             const imageFile = websiteImage?.w_image;
 
             if (imageFile) {
-                const fullPath = path.join(__dirname, "..", imageFile);
+                const fullPath = path.join(process.cwd(), "public", imageFile)
                 // console.log("try delete:", fullPath); 
                 try {
                     await fs.unlink(fullPath);
