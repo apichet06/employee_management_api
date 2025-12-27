@@ -33,9 +33,9 @@ class EmployeeModel {
         try {
             const [result] = await db.query(`SELECT
                             a.*,
-                            b.d_department_en, b.d_department_th,
-                            c.p_name_en AS emp_p_name,c.p_name_th AS emp_p_name_th,
-                            d.wp_name_en, d.wp_name_th,
+                            b.d_department_en, b.d_department_th,b.d_department_ja,
+                            c.p_name_th AS emp_p_name_th,c.p_name_en AS emp_p_name_en,c.p_name_ja AS emp_p_name_ja,
+                            d.wp_name_en, d.wp_name_th,d.wp_name_ja,
                             sup.e_firstname_en AS sup_firstname,
                             f.p_name_en AS sup_p_name,f.p_name_th AS sup_p_name_th,
                             ads.e_firstname_en AS add_name,upd.e_firstname_en AS upd_name,sup.p_id AS sup_p_id
@@ -47,7 +47,7 @@ class EmployeeModel {
                             LEFT JOIN positions f  ON f.p_id   = sup.p_id
                             LEFT JOIN employees ads ON ads.e_id = a.e_add_name
                             LEFT JOIN employees upd ON upd.e_id = a.e_upd_name
-                            ORDER BY  a.e_id desc
+                            ORDER BY a.e_id desc
                             `);
             if (result)
                 return result;
