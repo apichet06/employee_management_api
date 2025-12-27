@@ -5,7 +5,7 @@ class NewsModel {
 
     static async getNewsAll() {
         try {
-            const [result] = await db.query(`SELECT a.*,b.e_firstname FROM news a
+            const [result] = await db.query(`SELECT a.*,b.e_firstname_en FROM news a
                 left join employees b on a.e_id = b.e_id
                 order by n_datetime desc`);
             if (result)

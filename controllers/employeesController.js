@@ -22,7 +22,7 @@ class EmployeeController {
             }
 
             delete user.e_password;
-            const token = jwt.sign({ userId: user.e_id, username: user.e_firstname, status: user.r_role, r_id: user.r_id }, process.env.JWT_SECRET, { expiresIn: '24h' });
+            const token = jwt.sign({ userId: user.e_id, username: user.e_firstname_en, status: user.r_role, r_id: user.r_id }, process.env.JWT_SECRET, { expiresIn: '24h' });
 
             return res.status(200).json({ status: "ok", message: "เข้าสู่ระบบสำเร็จ", data: user, token });
 
@@ -46,17 +46,17 @@ class EmployeeController {
     static async createEmployee(req, res) {
         try {
             const {
-                e_title, e_title_th, e_firstname, e_lastname, e_firstname_th,
-                e_lastname_th, e_firstname_jp, e_lastname_jp, e_birthday,
+                e_title_en, e_title_th, e_firstname_en, e_lastname_en, e_firstname_th,
+                e_lastname_th, e_firstname_ja, e_lastname_ja, e_birthday,
                 d_id, e_work_start_date, p_id, wp_id, e_email,
                 e_phone, e_status, e_user_line_id, e_blood_group, e_weight, e_high,
                 e_medical_condition, e_hypersensitivity, e_incise, e_parent_id } = req.body
             const file = req.file;
             const folder = 'employee';
 
-            const e_fullname = e_title + e_firstname + " " + e_lastname;
+            const e_fullname_en = e_title_en + e_firstname_en + " " + e_lastname_en;
             const e_fullname_th = e_title_th + e_firstname_th + " " + e_lastname_th;
-            const e_fullname_jp = e_firstname_jp + " " + e_lastname_jp;
+            const e_fullname_ja = e_firstname_ja + " " + e_lastname_ja;
             const e_add_name = req.user.userId;
             // const exists = await EmployeeModel.getByFullName(e_fullname);
 
@@ -67,6 +67,8 @@ class EmployeeController {
             //     }
             //     return res.status(400).json({ status: 'error', message: Messages.exists + exists.e_fullname });
             // }
+
+
 
             const e_usercode = await EmployeeModel.buildEmployeePrefix(e_work_start_date);
             const hashedPassword = await bcrypt.hash(e_usercode, 10);
@@ -80,12 +82,14 @@ class EmployeeController {
             }
 
             const reqData = [e_usercode, hashedPassword,
-                e_title, e_title_th, e_firstname, e_lastname, e_fullname,
-                e_firstname_th, e_lastname_th, e_fullname_th, e_firstname_jp,
-                e_lastname_jp, e_fullname_jp, e_birthday, d_id, e_work_start_date, p_id,
+                e_title_en, e_title_th, e_firstname_en, e_lastname_en, e_fullname_en,
+                e_firstname_th, e_lastname_th, e_fullname_th, e_firstname_ja,
+                e_lastname_ja, e_fullname_ja, e_birthday, d_id, e_work_start_date, p_id,
                 wp_id, e_email, e_phone, imagePath, e_status, e_user_line_id, e_add_name,
                 e_blood_group, e_weight, e_high, e_medical_condition, e_hypersensitivity,
                 e_incise, e_parent_id]
+
+
 
 
             const employee = await EmployeeModel.create(reqData)
@@ -102,8 +106,8 @@ class EmployeeController {
     static async updateEmployee(req, res) {
         try {
             const {
-                e_id, e_title, e_title_th, e_firstname, e_lastname, e_firstname_th, e_lastname_th,
-                e_firstname_jp, e_lastname_jp, e_birthday, d_id, e_work_start_date, p_id,
+                e_id, e_title_en, e_title_th, e_firstname_en, e_lastname_en, e_firstname_th, e_lastname_th,
+                e_firstname_ja, e_lastname_ja, e_birthday, d_id, e_work_start_date, p_id,
                 wp_id, e_email, e_phone, e_status, e_user_line_id, e_blood_group, e_weight,
                 e_high, e_medical_condition, e_hypersensitivity, e_incise, e_parent_id,
             } = req.body;
@@ -129,15 +133,15 @@ class EmployeeController {
                 //   แปลงเป็น '/' ให้เรียบร้อยก่อนเก็บลง DB
                 imagePath = uploadedPath.replace(/\\/g, '/');
             }
-            const e_fullname = e_title + e_firstname + " " + e_lastname;
+            const e_fullname_en = e_title_en + e_firstname_en + " " + e_lastname_en;
             const e_fullname_th = e_title_th + e_firstname_th + " " + e_lastname_th;
-            const e_fullname_jp = e_firstname_jp + " " + e_lastname_jp;
-            const hashedPassword = await bcrypt.hash(oldWebsite.e_usercode, 10);
+            const e_fullname_ja = e_firstname_ja + " " + e_lastname_ja;
+            // const hashedPassword = await bcrypt.hash(oldWebsite.e_usercode, 10);
             const e_upd_name = req.user.userId;
             const e_upd_datetime = new Date();
-            const reqData = [hashedPassword,
-                e_title, e_title_th, e_firstname, e_lastname, e_fullname, e_firstname_th,
-                e_lastname_th, e_fullname_th, e_firstname_jp, e_lastname_jp, e_fullname_jp,
+            const reqData = [
+                e_title_en, e_title_th, e_firstname_en, e_lastname_en, e_fullname_en, e_firstname_th,
+                e_lastname_th, e_fullname_th, e_firstname_ja, e_lastname_ja, e_fullname_ja,
                 e_birthday, d_id, e_work_start_date, p_id, wp_id, e_email, e_phone,
                 imagePath, e_status, e_user_line_id, e_upd_datetime, e_upd_name, e_blood_group,
                 e_weight, e_high, e_medical_condition, e_hypersensitivity, e_incise, e_parent_id,
@@ -188,7 +192,6 @@ class EmployeeController {
     static async resetPassword(req, res) {
         try {
             const { e_id } = req.params
-
 
             const employee = await EmployeeModel.getEmployeeById(e_id);
             if (!employee) {

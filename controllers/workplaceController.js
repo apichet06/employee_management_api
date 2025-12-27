@@ -15,8 +15,8 @@ class WorkplaceController {
 
     static async createWorkplace(req, res) {
         try {
-            const { wp_name, wp_name_th, wp_name_jp } = req.body
-            const reqData = [wp_name, wp_name_th, wp_name_jp]
+            const { wp_name_en, wp_name_th, wp_name_ja } = req.body
+            const reqData = [wp_name_en, wp_name_th, wp_name_ja]
 
             const workplace = await WorkplaceModel.create(reqData)
             res.status(200).json({ status: Messages.ok, message: Messages.insertSuccess, data: workplace })
@@ -30,8 +30,8 @@ class WorkplaceController {
 
     static async updateWorkplace(req, res) {
         try {
-            const { wp_name, wp_name_th, wp_name_jp, wp_id } = req.body
-            const reqData = [wp_name, wp_name_th, wp_name_jp, wp_id]
+            const { wp_name_en, wp_name_th, wp_name_ja, wp_id } = req.body
+            const reqData = [wp_name_en, wp_name_th, wp_name_ja, wp_id]
 
             console.log(reqData);
 

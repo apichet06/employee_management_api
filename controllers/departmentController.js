@@ -15,14 +15,15 @@ class DepartmentController {
     }
     static async createDepartment(req, res) {
         try {
-            const { d_department, d_department_th, d_department_jp } = req.body;
-            const reqData = [d_department, d_department_th, d_department_jp]
+            const { d_department_en, d_department_th, d_department_ja } = req.body;
+            const reqData = [d_department_en, d_department_th, d_department_ja]
+
 
             const department = await DeppartmentModel.create(reqData)
             res.status(200).json({ status: Messages.ok, message: Messages.insertSuccess, data: department })
         } catch (error) {
             if (error.code === "ER_DUP_ENTRY") {
-                return res.status(409).json({ status: Messages.error, message: Messages.exists + req.body.d_department });
+                return res.status(409).json({ status: Messages.error, message: Messages.exists + req.body.d_department_en });
             }
             res.status(500).json({ status: Messages.error500, message: error.message });
         }
@@ -30,16 +31,16 @@ class DepartmentController {
 
     static async updateDepartment(req, res) {
         try {
-            const { d_department, d_department_th, d_department_jp, d_id } = req.body
+            const { d_department_en, d_department_th, d_department_ja, d_id } = req.body
 
-            const reqData = [d_department, d_department_th, d_department_jp, d_id]
+            const reqData = [d_department_en, d_department_th, d_department_ja, d_id]
 
             const department = await DeppartmentModel.update(reqData)
 
             res.status(200).json({ status: Messages.ok, message: Messages.updateSuccess, data: department })
         } catch (error) {
             if (error.code === "ER_DUP_ENTRY") {
-                return res.status(409).json({ status: Messages.error, message: Messages.exists + req.body.d_department });
+                return res.status(409).json({ status: Messages.error, message: Messages.exists + req.body.d_department_en });
             }
             res.status(500).json({ status: Messages.error500, message: error.message });
         }

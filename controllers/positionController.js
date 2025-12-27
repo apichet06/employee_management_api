@@ -14,8 +14,8 @@ class PostionController {
     }
     static async createPosition(req, res) {
         try {
-            const { p_name, p_name_th, p_name_jp } = req.body
-            const reqData = [p_name, p_name_th, p_name_jp]
+            const { p_name_en, p_name_th, p_name_ja } = req.body
+            const reqData = [p_name_en, p_name_th, p_name_ja]
 
             const position = await PositionModel.create(reqData)
             res.status(200).json({ status: Messages.ok, message: Messages.insertSuccess, data: position })
@@ -29,8 +29,8 @@ class PostionController {
 
     static async updatePosition(req, res) {
         try {
-            const { p_name, p_name_th, p_name_jp, p_id } = req.body
-            const reqData = [p_name, p_name_th, p_name_jp, p_id]
+            const { p_name_en, p_name_th, p_name_ja, p_id } = req.body
+            const reqData = [p_name_en, p_name_th, p_name_ja, p_id]
 
             const position = await PositionModel.update(reqData)
             res.status(200).json({ status: Messages.ok, message: Messages.updateSuccess, data: position })

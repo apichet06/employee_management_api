@@ -34,8 +34,10 @@ class DeppartmentModel {
             const NextId = await this.generageMaxId()
             reqData.push(NextId)
 
-            const [result] = await db.query('INSERT INTO department (d_department, d_department_th,d_department_jp, d_code) VALUES (?, ?, ?)', reqData
-            );
+            console.log(reqData);
+
+
+            const [result] = await db.query('INSERT INTO department (d_department_en, d_department_th,d_department_ja, d_code) VALUES (?, ?, ?, ? )', reqData);
             return result;
 
         } catch (error) {
@@ -46,7 +48,7 @@ class DeppartmentModel {
     static async update(reqData) {
         try {
 
-            const [result] = await db.query(`UPDATE department SET d_department=?, d_department_th=?, d_department_jp=? WHERE d_id = ?`, reqData);
+            const [result] = await db.query(`UPDATE department SET d_department_en=?, d_department_th=?, d_department_ja=? WHERE d_id = ?`, reqData);
             return result;
 
         } catch (error) {

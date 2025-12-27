@@ -5,8 +5,8 @@ class EmployeeModel {
     static async findByUserLogin(usercode) {
 
         try {
-            const [result] = await db.query(`SELECT a.*,c.w_name,d.e_fullname,d.e_usercode,d.e_password,b.r_role,b.r_id,
-                e.d_department,d_department_th,f.p_name,f.p_name_th,d.e_image,d.e_email,d.e_id as e_id
+            const [result] = await db.query(`SELECT a.*,c.w_name,d.e_fullname_en,d.e_usercode,d.e_password,b.r_role,b.r_id,
+                e.d_department_en,d_department_th,f.p_name_en,f.p_name_th,d.e_image,d.e_email,d.e_id as e_id
                 FROM employee_roles a
                 right join roles b 
                 on a.r_id = b.r_id
@@ -33,12 +33,12 @@ class EmployeeModel {
         try {
             const [result] = await db.query(`SELECT
                             a.*,
-                            b.d_department, b.d_department_th,
-                            c.p_name AS emp_p_name,c.p_name_th AS emp_p_name_th,
-                            d.wp_name, d.wp_name_th,
-                            sup.e_firstname AS sup_firstname,
-                            f.p_name AS sup_p_name,f.p_name_th AS sup_p_name_th,
-                            ads.e_firstname AS add_name,upd.e_firstname AS upd_name,sup.p_id AS sup_p_id
+                            b.d_department_en, b.d_department_th,
+                            c.p_name_en AS emp_p_name,c.p_name_th AS emp_p_name_th,
+                            d.wp_name_en, d.wp_name_th,
+                            sup.e_firstname_en AS sup_firstname,
+                            f.p_name_en AS sup_p_name,f.p_name_th AS sup_p_name_th,
+                            ads.e_firstname_en AS add_name,upd.e_firstname_en AS upd_name,sup.p_id AS sup_p_id
                             FROM employees a
                             JOIN department b  ON a.d_id  = b.d_id
                             JOIN positions  c  ON a.p_id  = c.p_id
@@ -82,21 +82,14 @@ class EmployeeModel {
 
     static async create(reqData) {
         try {
-            // const max = await EmployeeModel.getEmployeeMaxId();
-            // const prefix = await EmployeeModel.buildEmployeePrefix(reqData[13]);
-
-            // const nextRunning = String(max + 1).padStart(3, "0");
-            // const e_usercode = `${prefix}${nextRunning}`;
-            // const finalReqData = [e_usercode, ...reqData];
-
 
             const [result] = await db.query(`INSERT INTO employees  
-                ( e_usercode,e_password,title,e_title_th,e_firstname,e_lastname,e_fullname,
-                e_firstname_th,e_lastname_th,e_fullname_th,e_firstname_jp,e_lastname_jp, 
-                e_fullname_jp,e_birthday,d_id,e_work_start_date,p_id,wp_id,e_email,e_phone,
+                ( e_usercode,e_password,e_title_en,e_title_th,e_firstname_en,e_lastname_en,e_fullname_en,
+                e_firstname_th,e_lastname_th,e_fullname_th,e_firstname_ja,e_lastname_ja, 
+                e_fullname_ja,e_birthday,d_id,e_work_start_date,p_id,wp_id,e_email,e_phone,
                 e_image,e_status,e_user_line_id,e_add_name,e_blood_group, e_weight,
                 e_high,e_medical_condition,e_hypersensitivity,e_incise,e_parent_id) 
-                VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`, reqData);
+                VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ? ,?)`, reqData);
             return result;
 
         } catch (error) {
@@ -107,10 +100,10 @@ class EmployeeModel {
     static async update(reqData) {
         try {
             // console.log(reqData);
-            const [result] = await db.query(`UPDATE employees SET e_password = ?,e_title = ?,e_title_th = ?,
-                    e_firstname = ?, e_lastname = ?, e_fullname = ?, 
+            const [result] = await db.query(`UPDATE employees SET e_title_en = ?,e_title_th = ?,
+                    e_firstname_en = ?, e_lastname_en = ?, e_fullname_en = ?, 
                     e_firstname_th = ?, e_lastname_th = ?, e_fullname_th = ?,
-                    e_firstname_jp = ?, e_lastname_jp = ?, e_fullname_jp = ?,
+                    e_firstname_ja = ?, e_lastname_ja = ?, e_fullname_ja = ?,
                     e_birthday = ?, d_id = ?, e_work_start_date = ?, p_id = ?, wp_id = ?,
                     e_email = ?, e_phone = ?, e_image = ?, e_status = ?, e_user_line_id = ?,
                     e_upd_datetime = ?, e_upd_name = ?, e_blood_group = ?, e_weight = ?, e_high = ?,
@@ -148,7 +141,7 @@ class EmployeeModel {
 
     static async getByFullName(id) {
         try {
-            const [result] = await db.query(`SELECT * FROM employees WHERE e_fullname = ?`, [id]);
+            const [result] = await db.query(`SELECT * FROM employees WHERE e_fullname_en = ?`, [id]);
             return result[0] || null;
         } catch (error) {
             throw error;

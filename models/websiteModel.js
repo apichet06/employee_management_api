@@ -5,7 +5,7 @@ class WebsiteModel {
 
     static async getWebsiteAll() {
         try {
-            const [result] = await db.query(`SELECT a.*,b.e_firstname FROM website a
+            const [result] = await db.query(`SELECT a.*,b.e_firstname_en FROM website a
                 left join employees b on a.e_id = b.e_id
                 order by w_id desc`);
             if (result)

@@ -5,7 +5,7 @@ class PositionModel {
 
     static async getpositionAll() {
         try {
-            const [result] = await db.query('SELECT * FROM positions');
+            const [result] = await db.query('SELECT * FROM positions ORDER BY p_id desc');
             if (result)
                 return result;
 
@@ -17,7 +17,7 @@ class PositionModel {
         try {
 
             const [result] = await db.query(
-                'INSERT INTO `positions` (`p_name`, `p_name_th`, `p_name_jp`) VALUES (?, ?)',
+                'INSERT INTO `positions` (`p_name_en`, `p_name_th`, `p_name_ja`) VALUES (?, ?, ?)',
                 reqData
             );
 
@@ -29,7 +29,7 @@ class PositionModel {
 
     static async update(reqData) {
         try {
-            const [result] = await db.query(`UPDATE positions SET p_name = ?, p_name_th = ? , p_name_jp = ? WHERE p_id = ?`, reqData);
+            const [result] = await db.query(`UPDATE positions SET p_name_en = ?, p_name_th = ? , p_name_ja = ? WHERE p_id = ?`, reqData);
             return result;
 
         } catch (error) {

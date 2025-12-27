@@ -4,7 +4,7 @@ class EmployeeRolesModel {
 
     static async employeeRolesAll() {
         try {
-            const [result] = await db.query(`SELECT a.*,c.w_name,d.e_fullname,d.e_usercode,b.r_name FROM employee_roles a
+            const [result] = await db.query(`SELECT a.*,c.w_name,d.e_fullname_en,d.e_usercode,b.r_name FROM employee_roles a
                 inner join roles b 
                 on a.r_id = b.r_id
                 inner join website c 
