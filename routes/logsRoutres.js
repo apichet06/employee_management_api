@@ -5,6 +5,6 @@ const Auth = require('../middleware/auth');
 const LogsController = require('../controllers/logsController');
 
 
-router.get("/", LogsController.lostList);
+router.get("/", Auth.authenticateToken, LogsController.lostList);
 
 module.exports = router;

@@ -6,18 +6,14 @@ class EmployeeModel {
 
         try {
             const [result] = await db.query(`SELECT a.*,c.w_name,d.e_fullname_en,d.e_usercode,d.e_password,b.r_role,b.r_id,
-                e.d_department_en,d_department_th,f.p_name_en,f.p_name_th,d.e_image,d.e_email,d.e_id as e_id
+                e.d_department_en,d_department_th,f.p_name_en,f.p_name_th,d.e_image,d.e_email,d.e_id as e_id,g.wp_name_th,g.wp_id,d.d_id
                 FROM employee_roles a
-                right join roles b 
-                on a.r_id = b.r_id
-                right join website c 
-                on a.w_id = c.w_id
-                right join employees d 
-                on a.e_id = d.e_id
-                right join department e 
-                on d.d_id = e.d_id
-                right join positions f 
-                on d.p_id = f.p_id
+                RIGHT JOIN roles b ON a.r_id = b.r_id
+                RIGHT JOIN website c ON a.w_id = c.w_id
+                RIGHT JOIN employees d ON a.e_id = d.e_id
+                RIGHT JOIN department e ON d.d_id = e.d_id
+                RIGHT JOIN positions f ON d.p_id = f.p_id
+                INNER JOIN workplace g ON g.wp_id = d.wp_id
                 Where d.e_usercode = ? LIMIT 1`, [usercode])
 
             return result[0] || null;

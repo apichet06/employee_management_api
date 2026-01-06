@@ -15,6 +15,9 @@ const employeeRoutes = require('./routes/employeesRoutes')
 const positionRoutes = require('./routes/positoinRoutes')
 const workplaceRoutes = require('./routes/workplaceRoutes')
 const logRoutes = require('./routes/logsRoutres')
+const employeesRolesRoutes = require('./routes/employeesrolesRoutes')
+const approverPermissionRoutes = require('./routes/approverPermissionRoutes')
+
 
 
 
@@ -28,6 +31,9 @@ app.use("/api/employee", employeeRoutes);
 app.use("/api/position", positionRoutes);
 app.use("/api/workplace", workplaceRoutes);
 app.use("/api/logs", logRoutes);
+app.use("/api/employeesroles", employeesRolesRoutes);
+app.use("/api/approverpermission", approverPermissionRoutes);
+
 
 app.get('/', (req, res) => {
     res.send('Hello World!')

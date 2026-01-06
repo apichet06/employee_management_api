@@ -7,7 +7,7 @@ const multer = require('multer');
 const upload = multer({ dest: 'public/uploads/' })
 
 router.post("/login", EmployeeController.login);
-router.get("/", EmployeeController.getEmployee);
+router.get("/", Auth.authenticateToken, EmployeeController.getEmployee);
 router.post("/", Auth.authenticateToken, upload.single('e_image'), EmployeeController.createEmployee);
 router.put("/:e_id", Auth.authenticateToken, upload.single('e_image'), EmployeeController.updateEmployee);
 router.delete("/:e_id", Auth.authenticateToken, EmployeeController.deleteEmployee);
