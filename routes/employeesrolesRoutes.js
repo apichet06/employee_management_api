@@ -4,8 +4,7 @@ const router = express.Router();
 
 
 const auth = require('../middleware/auth');
-const employeesRolesController = require('../controllers/employeesRolescontroller');
-
+const employeesRolesController = require('../controllers/employeesRolesController');
 
 router.get('/', auth.authenticateToken, employeesRolesController.getRoles);
 router.get('/status', auth.authenticateToken, employeesRolesController.getRolesStatus);

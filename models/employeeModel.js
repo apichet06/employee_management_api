@@ -33,8 +33,9 @@ class EmployeeModel {
                             c.p_name_th AS emp_p_name_th,c.p_name_en AS emp_p_name_en,c.p_name_ja AS emp_p_name_ja,
                             d.wp_name_en, d.wp_name_th,d.wp_name_ja,
                             sup.e_firstname_en AS sup_firstname,
-                            f.p_name_en AS sup_p_name,f.p_name_th AS sup_p_name_th,
-                            ads.e_firstname_en AS add_name,upd.e_firstname_en AS upd_name,sup.p_id AS sup_p_id
+                            f.p_name_en AS sup_p_name_en,f.p_name_th AS sup_p_name_th,
+                            ads.e_firstname_en AS add_name,upd.e_firstname_en AS upd_name,sup.p_id AS sup_p_id,
+                            a.e_idcard,a.e_address,a.e_signature,a.e_degree
                             FROM employees a
                             JOIN department b  ON a.d_id  = b.d_id
                             JOIN positions  c  ON a.p_id  = c.p_id
@@ -81,11 +82,11 @@ class EmployeeModel {
 
             const [result] = await db.query(`INSERT INTO employees  
                 ( e_usercode,e_password,e_title_en,e_title_th,e_firstname_en,e_lastname_en,e_fullname_en,
-                e_firstname_th,e_lastname_th,e_fullname_th,e_firstname_ja,e_lastname_ja, 
+                e_firstname_th,e_lastname_th,e_fullname_th,e_firstname_ja,e_lastname_ja,
                 e_fullname_ja,e_birthday,d_id,e_work_start_date,p_id,wp_id,e_email,e_phone,
                 e_image,e_status,e_user_line_id,e_add_name,e_blood_group, e_weight,
-                e_high,e_medical_condition,e_hypersensitivity,e_incise,e_parent_id) 
-                VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ? ,?)`, reqData);
+                e_high,e_medical_condition,e_hypersensitivity,e_incise,e_parent_id,e_address,e_signature,e_degree,e_idcard) 
+                VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ? , ?, ?, ?, ?, ?)`, reqData);
             return result;
 
         } catch (error) {
@@ -104,7 +105,8 @@ class EmployeeModel {
                     e_email = ?, e_phone = ?, e_image = ?, e_status = ?, e_user_line_id = ?,
                     e_upd_datetime = ?, e_upd_name = ?, e_blood_group = ?, e_weight = ?, e_high = ?,
                     e_medical_condition = ?, e_hypersensitivity = ?, e_incise = ?,
-                    e_parent_id = ? WHERE e_id = ?`, reqData);
+                    e_parent_id = ?, e_address = ?, e_signature = ?, e_degree = ?, e_idcard = ?
+                   WHERE e_id = ?`, reqData);
             return result;
 
         } catch (error) {

@@ -8,8 +8,14 @@ const upload = multer({ dest: 'public/uploads/' })
 
 router.post("/login", EmployeeController.login);
 router.get("/", Auth.authenticateToken, EmployeeController.getEmployee);
-router.post("/", Auth.authenticateToken, upload.single('e_image'), EmployeeController.createEmployee);
-router.put("/:e_id", Auth.authenticateToken, upload.single('e_image'), EmployeeController.updateEmployee);
+router.post("/", Auth.authenticateToken, upload.fields([
+    { name: "e_image", maxCount: 1 },
+    { name: "e_signature", maxCount: 1 },
+]), EmployeeController.createEmployee);
+router.put("/:e_id", Auth.authenticateToken, upload.fields([
+    { name: "e_image", maxCount: 1 },
+    { name: "e_signature", maxCount: 1 },
+]), EmployeeController.updateEmployee);
 router.delete("/:e_id", Auth.authenticateToken, EmployeeController.deleteEmployee);
 router.put("/reset-password/:e_id", Auth.authenticateToken, EmployeeController.resetPassword);
 

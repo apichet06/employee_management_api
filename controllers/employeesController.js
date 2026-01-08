@@ -50,9 +50,13 @@ class EmployeeController {
                 e_lastname_th, e_firstname_ja, e_lastname_ja, e_birthday,
                 d_id, e_work_start_date, p_id, wp_id, e_email,
                 e_phone, e_status, e_user_line_id, e_blood_group, e_weight, e_high,
-                e_medical_condition, e_hypersensitivity, e_incise, e_parent_id } = req.body
-            const file = req.file;
+                e_medical_condition, e_hypersensitivity, e_incise, e_parent_id, e_address, e_degree, e_idcard
+            } = req.body
+            const files = req.files || {};
+            const imageFile = files.e_image?.[0] || null;
+            const signatureFile = files.e_signature?.[0] || null;
             const folder = 'employee';
+            const folder_signature = 'signature';
 
             const e_fullname_en = e_title_en + e_firstname_en + " " + e_lastname_en;
             const e_fullname_th = e_title_th + e_firstname_th + " " + e_lastname_th;
@@ -75,22 +79,26 @@ class EmployeeController {
 
 
             let imagePath = null;
-            if (file) {
-                const uploadedPath = await FileUpload.uploadFile(file, `${e_usercode}_${Date.now()}`, folder);
+            let signaturePath = null;
+
+            if (imageFile) {
+                const uploadedPath = await FileUpload.uploadFile(imageFile, `${e_usercode}_${Date.now()}`, folder);
                 //   แปลงเป็น '/' ให้เรียบร้อยก่อนเก็บลง DB
                 imagePath = uploadedPath.replace(/\\/g, '/');
-            }
 
+
+            }
+            if (signatureFile) {
+                const uploadedSignature = await FileUpload.uploadFile(signatureFile, `${e_usercode}_sign_${Date.now()}`, folder_signature);
+                signaturePath = uploadedSignature.replace(/\\/g, "/");
+            }
             const reqData = [e_usercode, hashedPassword,
                 e_title_en, e_title_th, e_firstname_en, e_lastname_en, e_fullname_en,
                 e_firstname_th, e_lastname_th, e_fullname_th, e_firstname_ja,
                 e_lastname_ja, e_fullname_ja, e_birthday, d_id, e_work_start_date, p_id,
                 wp_id, e_email, e_phone, imagePath, e_status, e_user_line_id, e_add_name,
                 e_blood_group, e_weight, e_high, e_medical_condition, e_hypersensitivity,
-                e_incise, e_parent_id]
-
-
-
+                e_incise, e_parent_id, e_address, signaturePath, e_degree, e_idcard]
 
             const employee = await EmployeeModel.create(reqData)
             res.status(200).json({ status: Messages.ok, message: Messages.insertSuccess, data: employee })
@@ -109,16 +117,22 @@ class EmployeeController {
                 e_id, e_title_en, e_title_th, e_firstname_en, e_lastname_en, e_firstname_th, e_lastname_th,
                 e_firstname_ja, e_lastname_ja, e_birthday, d_id, e_work_start_date, p_id,
                 wp_id, e_email, e_phone, e_status, e_user_line_id, e_blood_group, e_weight,
-                e_high, e_medical_condition, e_hypersensitivity, e_incise, e_parent_id,
+                e_high, e_medical_condition, e_hypersensitivity, e_incise, e_parent_id, e_address, e_degree, e_idcard
             } = req.body;
-            const file = req.file;
+            const files = req.files || {};
+            const imageFile = files.e_image?.[0] || null;
+            const signatureFile = files.e_signature?.[0] || null;
             const folder = 'employee';
+            const folder_signature = 'signature';
 
             const oldWebsite = await EmployeeModel.getEmployeeById(e_id);
             const oldImagePath = oldWebsite?.e_image || null;
             let imagePath = oldImagePath; // default = ใช้ของเก่าไปก่อน
 
-            if (file) {
+            const oldImageSignature = oldWebsite?.e_signature || null;
+            let signaturePath = oldImageSignature;
+
+            if (imageFile) {
 
                 if (oldImagePath) {
                     const fullOldPath = path.join(process.cwd(), "public", oldImagePath)
@@ -129,10 +143,25 @@ class EmployeeController {
                     }
                 }
 
-                const uploadedPath = await FileUpload.uploadFile(file, `${oldWebsite.e_usercode}_${Date.now()}`, folder);
+                const uploadedPath = await FileUpload.uploadFile(imageFile, `${oldWebsite.e_usercode}_${Date.now()}`, folder);
                 //   แปลงเป็น '/' ให้เรียบร้อยก่อนเก็บลง DB
                 imagePath = uploadedPath.replace(/\\/g, '/');
             }
+            if (signatureFile) {
+                if (oldImageSignature) {
+                    const fullOldPath = path.join(process.cwd(), "public", oldImageSignature);
+                    try {
+                        await fs.unlink(fullOldPath);
+                    } catch (err) {
+                        console.log("ลบลายเซ็นเก่าไม่ได้ (อาจไม่มีไฟล์):", err.message);
+                    }
+                }
+                const uploadedPath = await FileUpload.uploadFile(signatureFile, `${oldWebsite.e_usercode}_sign_${Date.now()}`, folder_signature);
+                signaturePath = uploadedPath.replace(/\\/g, '/');
+            }
+
+
+
             const e_fullname_en = e_title_en + e_firstname_en + " " + e_lastname_en;
             const e_fullname_th = e_title_th + e_firstname_th + " " + e_lastname_th;
             const e_fullname_ja = e_firstname_ja + " " + e_lastname_ja;
@@ -145,7 +174,7 @@ class EmployeeController {
                 e_birthday, d_id, e_work_start_date, p_id, wp_id, e_email, e_phone,
                 imagePath, e_status, e_user_line_id, e_upd_datetime, e_upd_name, e_blood_group,
                 e_weight, e_high, e_medical_condition, e_hypersensitivity, e_incise, e_parent_id,
-                e_id,
+                e_address, signaturePath, e_degree, e_idcard, e_id
             ];
             const employee = await EmployeeModel.update(reqData)
             res.status(200).json({ status: Messages.ok, message: Messages.updateSuccess, data: employee })

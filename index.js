@@ -20,8 +20,6 @@ const approverPermissionRoutes = require('./routes/approverPermissionRoutes')
 
 
 
-
-
 app.use("/api/uploads", express.static(path.join(__dirname, "public/uploads")));
 app.use('/api/website', websites)
 app.use('/api/holiday', holidays)

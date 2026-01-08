@@ -6,7 +6,7 @@ class ApproverPermissionModel {
         try {
             const [result] = await db.query(`
                 SELECT ap.ap_id, ap.wp_id, ap.w_id, ap.e_id, ap.d_id, ap.a_date,
-                       e.e_fullname_en, e.e_fullname_th, e.e_fullname_ja,
+                       e.e_fullname_en, e.e_fullname_th, e.e_fullname_ja,w.w_name,
                        e.e_usercode, p.p_name_en, p.p_name_th, p.p_name_ja,
                        d.d_department_en, d.d_department_th, d.d_department_ja,
                        sd.d_department_en as sub_department_en, sd.d_department_th as sub_department_th, sd.d_department_ja as sub_department_ja,
@@ -31,7 +31,7 @@ class ApproverPermissionModel {
     static async create(reqData) {
         try {
             const [result] = await db.query(
-                'INSERT INTO approver_permissions (wp_id, w_id, e_id, d_id) VALUES (?, ?, ?, ?,)', reqData);
+                'INSERT INTO approver_permissions (wp_id, w_id, e_id, d_id) VALUES (?, ?, ?, ?)', reqData);
             return result;
         } catch (error) {
             throw error;
