@@ -26,6 +26,7 @@ class Messages {
     static expiredToken = "Token หมดอายุ กรุณาเข้าสู่ระบบใหม่";
     static notToken = "Authentication token is missing, ไม่มีโทเค็นการตรวจสอบสิทธิ์";
     static inUseCannotDelete = "ข้อมูลนี้ถูกใช้อยู่ไม่สามารถลบได้"
+    static resign = "บัญชีผู้ใช้นี้พ้นสภาพพนักงานแล้ว กรุณาติดต่อ HR!"
 }
 
 module.exports = Messages

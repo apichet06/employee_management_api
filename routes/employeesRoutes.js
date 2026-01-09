@@ -7,7 +7,8 @@ const multer = require('multer');
 const upload = multer({ dest: 'public/uploads/' })
 
 router.post("/login", EmployeeController.login);
-router.get("/", Auth.authenticateToken, EmployeeController.getEmployee);
+router.get("/", Auth.authenticateToken, EmployeeController.getEmployeeAndResignAll); //ไม่แสดงคนลาออก
+router.get("/all", Auth.authenticateToken, EmployeeController.getEmployeeAll); // แสดงรวมคนลาออก
 router.post("/", Auth.authenticateToken, upload.fields([
     { name: "e_image", maxCount: 1 },
     { name: "e_signature", maxCount: 1 },

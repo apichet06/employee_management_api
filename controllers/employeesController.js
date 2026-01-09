@@ -21,6 +21,10 @@ class EmployeeController {
                 return res.status(400).json({ status: Messages.error, message: Messages.invalidPassword });
             }
 
+            if (user.e_status === 1) {
+                return res.status(403).json({ status: Messages.error, message: Messages.resign });
+            }
+
             delete user.e_password;
             const token = jwt.sign({ userId: user.e_id, username: user.e_firstname_en, status: user.r_role, r_id: user.r_id }, process.env.JWT_SECRET, { expiresIn: '24h' });
 
@@ -31,7 +35,18 @@ class EmployeeController {
         }
     }
 
-    static async getEmployee(req, res) {
+    static async getEmployeeAndResignAll(req, res) {
+        try {
+
+            const employee = await EmployeeModel.getEmployeeAndResign()
+            if (employee)
+                res.status(200).json({ status: "ok", data: employee })
+        } catch (error) {
+            res.status(500).json({ status: Messages.error500, message: error.message })
+        }
+    }
+
+    static async getEmployeeAll(req, res) {
         try {
 
             const employee = await EmployeeModel.getEmployeeAll()
@@ -42,7 +57,6 @@ class EmployeeController {
         }
     }
 
-
     static async createEmployee(req, res) {
         try {
             const {
@@ -50,7 +64,7 @@ class EmployeeController {
                 e_lastname_th, e_firstname_ja, e_lastname_ja, e_birthday,
                 d_id, e_work_start_date, p_id, wp_id, e_email,
                 e_phone, e_status, e_user_line_id, e_blood_group, e_weight, e_high,
-                e_medical_condition, e_hypersensitivity, e_incise, e_parent_id, e_address, e_degree, e_idcard
+                e_medical_condition, e_hypersensitivity, e_incise, e_parent_id, e_address, e_degree, e_idcard, e_resign_date
             } = req.body
             const files = req.files || {};
             const imageFile = files.e_image?.[0] || null;
@@ -62,6 +76,10 @@ class EmployeeController {
             const e_fullname_th = e_title_th + e_firstname_th + " " + e_lastname_th;
             const e_fullname_ja = e_firstname_ja + " " + e_lastname_ja;
             const e_add_name = req.user.userId;
+
+
+
+
             // const exists = await EmployeeModel.getByFullName(e_fullname);
 
             // if (exists) {
@@ -98,7 +116,7 @@ class EmployeeController {
                 e_lastname_ja, e_fullname_ja, e_birthday, d_id, e_work_start_date, p_id,
                 wp_id, e_email, e_phone, imagePath, e_status, e_user_line_id, e_add_name,
                 e_blood_group, e_weight, e_high, e_medical_condition, e_hypersensitivity,
-                e_incise, e_parent_id, e_address, signaturePath, e_degree, e_idcard]
+                e_incise, e_parent_id, e_address, signaturePath, e_degree, e_idcard, e_resign_date]
 
             const employee = await EmployeeModel.create(reqData)
             res.status(200).json({ status: Messages.ok, message: Messages.insertSuccess, data: employee })
@@ -117,7 +135,7 @@ class EmployeeController {
                 e_id, e_title_en, e_title_th, e_firstname_en, e_lastname_en, e_firstname_th, e_lastname_th,
                 e_firstname_ja, e_lastname_ja, e_birthday, d_id, e_work_start_date, p_id,
                 wp_id, e_email, e_phone, e_status, e_user_line_id, e_blood_group, e_weight,
-                e_high, e_medical_condition, e_hypersensitivity, e_incise, e_parent_id, e_address, e_degree, e_idcard
+                e_high, e_medical_condition, e_hypersensitivity, e_incise, e_parent_id, e_address, e_degree, e_idcard, e_resign_date
             } = req.body;
             const files = req.files || {};
             const imageFile = files.e_image?.[0] || null;
@@ -168,13 +186,17 @@ class EmployeeController {
             // const hashedPassword = await bcrypt.hash(oldWebsite.e_usercode, 10);
             const e_upd_name = req.user.userId;
             const e_upd_datetime = new Date();
+
+            const ResignDate = e_status === "1" ? e_resign_date : null;
+
+
             const reqData = [
                 e_title_en, e_title_th, e_firstname_en, e_lastname_en, e_fullname_en, e_firstname_th,
                 e_lastname_th, e_fullname_th, e_firstname_ja, e_lastname_ja, e_fullname_ja,
                 e_birthday, d_id, e_work_start_date, p_id, wp_id, e_email, e_phone,
                 imagePath, e_status, e_user_line_id, e_upd_datetime, e_upd_name, e_blood_group,
                 e_weight, e_high, e_medical_condition, e_hypersensitivity, e_incise, e_parent_id,
-                e_address, signaturePath, e_degree, e_idcard, e_id
+                e_address, signaturePath, e_degree, e_idcard, ResignDate, e_id
             ];
             const employee = await EmployeeModel.update(reqData)
             res.status(200).json({ status: Messages.ok, message: Messages.updateSuccess, data: employee })

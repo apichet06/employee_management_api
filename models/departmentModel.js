@@ -16,7 +16,6 @@ class DeppartmentModel {
     }
 
 
-
     static async getDepartmentAll() {
         try {
             const [result] = await db.query('SELECT * FROM department');
@@ -33,8 +32,6 @@ class DeppartmentModel {
 
             const NextId = await this.generageMaxId()
             reqData.push(NextId)
-
-            console.log(reqData);
 
 
             const [result] = await db.query('INSERT INTO department (d_department_en, d_department_th,d_department_ja, d_code) VALUES (?, ?, ?, ? )', reqData);
