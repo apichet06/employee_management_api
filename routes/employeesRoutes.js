@@ -19,6 +19,6 @@ router.put("/:e_id", Auth.authenticateToken, upload.fields([
 ]), EmployeeController.updateEmployee);
 router.delete("/:e_id", Auth.authenticateToken, EmployeeController.deleteEmployee);
 router.put("/reset-password/:e_id", Auth.authenticateToken, EmployeeController.resetPassword);
-
+router.get("/scan/:e_usercode", EmployeeController.getScanEmployeeById)
 module.exports = router
 

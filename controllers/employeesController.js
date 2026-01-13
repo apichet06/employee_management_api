@@ -6,6 +6,7 @@ const path = require("path");
 const fs = require("fs").promises;
 const bcrypt = require('bcrypt');
 
+
 class EmployeeController {
 
     static async login(req, res) {
@@ -78,8 +79,6 @@ class EmployeeController {
             const e_add_name = req.user.userId;
 
 
-
-
             // const exists = await EmployeeModel.getByFullName(e_fullname);
 
             // if (exists) {
@@ -110,13 +109,16 @@ class EmployeeController {
                 const uploadedSignature = await FileUpload.uploadFile(signatureFile, `${e_usercode}_sign_${Date.now()}`, folder_signature);
                 signaturePath = uploadedSignature.replace(/\\/g, "/");
             }
+
+            const resignDate = e_status === "1" ? e_resign_date : null;
+
             const reqData = [e_usercode, hashedPassword,
                 e_title_en, e_title_th, e_firstname_en, e_lastname_en, e_fullname_en,
                 e_firstname_th, e_lastname_th, e_fullname_th, e_firstname_ja,
                 e_lastname_ja, e_fullname_ja, e_birthday, d_id, e_work_start_date, p_id,
                 wp_id, e_email, e_phone, imagePath, e_status, e_user_line_id, e_add_name,
                 e_blood_group, e_weight, e_high, e_medical_condition, e_hypersensitivity,
-                e_incise, e_parent_id, e_address, signaturePath, e_degree, e_idcard, e_resign_date]
+                e_incise, e_parent_id, e_address, signaturePath, e_degree, e_idcard, resignDate]
 
             const employee = await EmployeeModel.create(reqData)
             res.status(200).json({ status: Messages.ok, message: Messages.insertSuccess, data: employee })
@@ -258,6 +260,27 @@ class EmployeeController {
             if (error.code === "ER_DUP_ENTRY") {
                 return res.status(409).json({ status: Messages.error, message: Messages.exists + req.body.e_usercode });
             }
+            res.status(500).json({ status: Messages.error500, message: error.message });
+        }
+    }
+
+
+    static async getScanEmployeeById(req, res) {
+        try {
+            const { e_usercode } = req.params
+
+
+            const employee = await EmployeeModel.getScanEmployeeByUsercode(e_usercode)
+
+            if (!employee) {
+                return res.status(403).json({ status: Messages.error, message: Messages.idNotFound })
+            }
+
+
+            const { e_password, e_parent_id, add_name, upd_name, sup_p_id, sup_firstname, sup_p_name_en, sup_p_name_th, ...safeEmplooyee } = employee;
+
+            res.status(200).json({ status: "ok", data: safeEmplooyee })
+        } catch (error) {
             res.status(500).json({ status: Messages.error500, message: error.message });
         }
     }
