@@ -265,6 +265,38 @@ class EmployeeController {
     }
 
 
+
+    static async setNewPassword(req, res) {
+        try {
+            const { e_id } = req.params
+            const { PasswordNew, PasswordOld } = req.body;
+
+
+            const employee = await EmployeeModel.getEmployeeById(e_id);
+            if (!employee) {
+                return res.status(404).json({ status: Messages.error, message: Messages.notFound });
+
+            }
+
+            const passwordMatch = await bcrypt.compare(PasswordOld, employee.e_password)
+            if (!passwordMatch) {
+                return res.status(403).json({ status: Messages.error, message: Messages.PasswordNotmatch })
+            }
+
+            const hashedPassword = await bcrypt.hash(PasswordNew, 10);
+            const reqData = [hashedPassword, e_id]
+            const resetPassword = await EmployeeModel.ResetPassword(reqData)
+            res.status(200).json({ status: Messages.ok, message: Messages.ResetPwdSuccess, data: resetPassword })
+
+        } catch (error) {
+            if (error.code === "ER_DUP_ENTRY") {
+                return res.status(409).json({ status: Messages.error, message: Messages.exists + req.body.e_usercode });
+            }
+            res.status(500).json({ status: Messages.error500, message: error.message });
+        }
+    }
+
+
     static async getScanEmployeeById(req, res) {
         try {
             const { e_usercode } = req.params
