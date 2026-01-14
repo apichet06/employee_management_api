@@ -39,9 +39,15 @@ class EmployeeController {
     static async getEmployeeAndResignAll(req, res) {
         try {
 
-            const employee = await EmployeeModel.getEmployeeAndResign()
-            if (employee)
-                res.status(200).json({ status: "ok", data: employee })
+            const employees = await EmployeeModel.getEmployeeAndResign()
+            const list = Array.isArray(employees) ? employees : []
+
+            const safeEmployees = list.map((emp) => {
+                if (!emp || typeof emp !== "object") return emp
+                const { e_password, ...rest } = emp
+                return rest
+            })
+            res.status(200).json({ status: "ok", data: safeEmployees })
         } catch (error) {
             res.status(500).json({ status: Messages.error500, message: error.message })
         }
@@ -50,13 +56,20 @@ class EmployeeController {
     static async getEmployeeAll(req, res) {
         try {
 
-            const employee = await EmployeeModel.getEmployeeAll()
-            if (employee)
-                res.status(200).json({ status: "ok", data: employee })
+            const employees = await EmployeeModel.getEmployeeAll()
+            const list = Array.isArray(employees) ? employees : []
+
+            const safeEmployees = list.map((emp) => {
+                if (!emp || typeof emp !== "object") return emp
+                const { e_password, ...rest } = emp
+                return rest
+            })
+            res.status(200).json({ status: "ok", data: safeEmployees })
         } catch (error) {
             res.status(500).json({ status: Messages.error500, message: error.message })
         }
     }
+
 
     static async createEmployee(req, res) {
         try {
@@ -77,19 +90,6 @@ class EmployeeController {
             const e_fullname_th = e_title_th + e_firstname_th + " " + e_lastname_th;
             const e_fullname_ja = e_firstname_ja + " " + e_lastname_ja;
             const e_add_name = req.user.userId;
-
-
-            // const exists = await EmployeeModel.getByFullName(e_fullname);
-
-            // if (exists) {
-            //     // ถ้ามีไฟล์แล้วอัปขึ้น temp มา ก็ค่อยลบทิ้ง
-            //     if (file) {
-            //         fs.unlink(file.path);
-            //     }
-            //     return res.status(400).json({ status: 'error', message: Messages.exists + exists.e_fullname });
-            // }
-
-
 
             const e_usercode = await EmployeeModel.buildEmployeePrefix(e_work_start_date);
             const hashedPassword = await bcrypt.hash(e_usercode, 10);
@@ -191,7 +191,6 @@ class EmployeeController {
 
             const ResignDate = e_status === "1" ? e_resign_date : null;
 
-
             const reqData = [
                 e_title_en, e_title_th, e_firstname_en, e_lastname_en, e_fullname_en, e_firstname_th,
                 e_lastname_th, e_fullname_th, e_firstname_ja, e_lastname_ja, e_fullname_ja,
@@ -238,9 +237,22 @@ class EmployeeController {
                     status: Messages.error, message: Messages.inUseCannotDelete, // "ข้อมูลนี้ถูกใช้อยู่ไม่สามารถลบได้"   
                 })
             }
+            res.status(500).json({ status: Messages.error500, message: error.message });
         }
 
     }
+
+    static async getEmployeeAccount(req, res) {
+        try {
+            const { emp } = req.params
+            const employee = await EmployeeModel.getAccountByemp(emp)
+
+            res.status(200).json({ status: "ok", data: employee })
+        } catch (error) {
+            res.status(500).json({ status: Messages.error500, message: error.message });
+        }
+    }
+
 
     static async resetPassword(req, res) {
         try {
@@ -252,7 +264,7 @@ class EmployeeController {
 
             }
             const hashedPassword = await bcrypt.hash(employee.e_usercode, 10);
-            const reqData = [hashedPassword, e_id]
+            const reqData = [hashedPassword, null, e_id]
             const resetPassword = await EmployeeModel.ResetPassword(reqData)
             res.status(200).json({ status: Messages.ok, message: Messages.ResetPwdSuccess, data: resetPassword })
 
@@ -284,7 +296,8 @@ class EmployeeController {
             }
 
             const hashedPassword = await bcrypt.hash(PasswordNew, 10);
-            const reqData = [hashedPassword, e_id]
+            const e_date_pwd_change = new Date();
+            const reqData = [hashedPassword, e_date_pwd_change, e_id]
             const resetPassword = await EmployeeModel.ResetPassword(reqData)
             res.status(200).json({ status: Messages.ok, message: Messages.ResetPwdSuccess, data: resetPassword })
 
