@@ -64,7 +64,7 @@ class WebsiteModel {
 
     static async FindByWname(name) {
         const [rows] = await db.query('SELECT w_name FROM website WHERE w_name = ?', [name]);
-        // console.log(rows);
+
         return rows[0] || null;
 
     }

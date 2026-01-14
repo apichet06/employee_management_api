@@ -4,7 +4,9 @@ class HolidayModel {
 
     static async getHolidayAll() {
         try {
-            const [result] = await db.query('SELECT * FROM holiday order by h_start_date desc');
+            const [result] = await db.query(`SELECT a.*,b.e_firstname_en,b.e_firstname_th FROM holiday a 
+                        INNER JOIN employees b ON a.e_id = b.e_id
+                  order by h_start_date desc`);
             if (result)
                 return result;
 
@@ -15,7 +17,7 @@ class HolidayModel {
 
     static async getHolidayById(id) {
         try {
-            const [result] = await db.query('SELECT * FROM holiday WHERE e_id = ?', [id]);
+            const [result] = await db.query(`SELECT a FROM holiday WHERE  e_id = ?`, [id]);
             return result[0] || null;
         } catch (error) {
             throw error;

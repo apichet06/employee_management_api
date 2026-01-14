@@ -39,7 +39,6 @@ class NewsModel {
     }
 
     static async delete(reqData) {
-        console.log(reqData);
 
         try {
 

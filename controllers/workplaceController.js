@@ -33,7 +33,6 @@ class WorkplaceController {
             const { wp_name_en, wp_name_th, wp_name_ja, wp_id } = req.body
             const reqData = [wp_name_en, wp_name_th, wp_name_ja, wp_id]
 
-            console.log(reqData);
 
             const workplace = await WorkplaceModel.update(reqData)
             res.status(200).json({ status: Messages.ok, message: Messages.updateSuccess, data: workplace })

@@ -221,7 +221,7 @@ class EmployeeController {
 
             if (imageFile) {
                 const fullPath = path.join(process.cwd(), "public", imageFile)
-                console.log("try delete:", fullPath);
+
                 try {
                     await fs.unlink(fullPath);
                     console.log("ลบไฟล์รูปสำเร็จ");

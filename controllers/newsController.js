@@ -16,7 +16,9 @@ class NewsController {
 
     static async createNews(req, res) {
         try {
-            const { n_title, n_message, e_id = 1 } = req.body
+            const { n_title, n_message } = req.body
+            const e_id = req.user?.userId;
+
             const reqData = [n_title, n_message, e_id]
 
             const News = await NewsModel.create(reqData)

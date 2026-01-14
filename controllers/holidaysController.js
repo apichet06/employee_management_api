@@ -61,7 +61,7 @@ class HolidayController {
             const filePath = req.file.path;
             const rows = [];
 
-            const e_id = req.user?.e_id || 1;
+            const e_id = req.user?.userId;
 
             fs.createReadStream(filePath)
                 .pipe(csv()) // csv-parser จะ map header → field ให้

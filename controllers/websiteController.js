@@ -21,7 +21,7 @@ class WebsiteController {
     static async createWebsite(req, res) {
         try {
             const { w_name, w_url, w_status } = req.body;
-            const e_id = req.body.e_id || 1;
+            const e_id = req.user?.userId;
             const file = req.file;
             const folder = 'website';
 
