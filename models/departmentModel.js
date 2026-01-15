@@ -27,6 +27,17 @@ class DeppartmentModel {
         }
     }
 
+    static async getDepartmentById(reqData) {
+        try {
+            const [result] = await db.query(`SELECT * FROM department WHERE d_id = ? `, reqData);
+            return result[0] || null;
+        } catch (error) {
+            throw error;
+        }
+    }
+
+
+
     static async create(reqData) {
         try {
 

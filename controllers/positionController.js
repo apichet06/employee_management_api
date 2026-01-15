@@ -1,4 +1,5 @@
 const Messages = require("../config/messages");
+const logModel = require("../models/logsModlel");
 const PositionModel = require("../models/positionModel");
 
 
@@ -17,6 +18,11 @@ class PostionController {
             const { p_name_en, p_name_th, p_name_ja } = req.body
             const reqData = [p_name_en, p_name_th, p_name_ja]
 
+            // log
+            const logData = [`คุณ${req.user.username} ID: ${req.user.code} เพิ่มข้อมูลตำแหน่ง ${p_name_th} เรียบร้อยแล้ว`, 'Posttion']
+            await logModel.create(logData)
+
+
             const position = await PositionModel.create(reqData)
             res.status(200).json({ status: Messages.ok, message: Messages.insertSuccess, data: position })
         } catch (error) {
@@ -33,6 +39,11 @@ class PostionController {
             const reqData = [p_name_en, p_name_th, p_name_ja, p_id]
 
             const position = await PositionModel.update(reqData)
+
+            // log
+            const logData = [`คุณ${req.user.username} ID: ${req.user.code} แก้ไขข้อมูลตำแหน่งใหม่เป็น ${p_name_th} เรียบร้อยแล้ว`, 'Posttion']
+            await logModel.create(logData)
+
             res.status(200).json({ status: Messages.ok, message: Messages.updateSuccess, data: position })
         } catch (error) {
             if (error.code === "ER_DUP_ENTRY") {
@@ -46,6 +57,11 @@ class PostionController {
         try {
             const { p_id } = req.params
             const reqData = [p_id]
+            // log
+            const data = await PositionModel.getPositionById(p_id)
+            const logData = [`คุณ${req.user.username} ID: ${req.user.code} ลบข้อมูลตำแหน่ง ${data.p_name_th} เรียบร้อยแล้ว`, 'Posttion']
+            await logModel.create(logData)
+
             const position = await PositionModel.delete(reqData)
             res.status(200).json({ status: Messages.ok, message: Messages.deleteSuccess, data: position })
         } catch (error) {

@@ -20,6 +20,9 @@ class ApproverPermissionContoller {
             const reqData = [wp_id, w_id, e_id, d_id]
 
             const approverPermission = await ApproverPermissionModel.create(reqData)
+            // log
+
+
             res.status(200).json({ status: Messages.ok, message: Messages.insertSuccess, data: approverPermission })
         } catch (error) {
             if (error.code === "ER_DUP_ENTRY") {

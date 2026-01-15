@@ -2,7 +2,11 @@ const Messages = require('../config/messages');
 const HolidayModel = require('../models/holidaysModel');
 const fs = require('fs');
 const csv = require('csv-parser');
+
+const xlsx = require('xlsx');
+const path = require('path');
 const { toSqlDate } = require('../utils/date');
+
 
 
 
@@ -55,49 +59,65 @@ class HolidayController {
     static async importHoliday(req, res) {
         try {
             if (!req.file) {
-                return res.status(400).json({ status: 'error', message: 'กรุณาอัปโหลดไฟล์ CSV' });
+                return res.status(400).json({ status: "error", message: "กรุณาอัปโหลดไฟล์" });
             }
 
             const filePath = req.file.path;
-            const rows = [];
-
+            const ext = path.extname(req.file.originalname).toLowerCase();
             const e_id = req.user?.userId;
 
-            fs.createReadStream(filePath)
-                .pipe(csv()) // csv-parser จะ map header → field ให้
-                .on('data', (row) => {
-                    rows.push(row);
-                })
-                .on('end', async () => {
-                    try {
-                        for (const row of rows) {
-                            // ชื่อ column ต้องตรงกับ header ใน CSV
-                            const h_name = row.h_name;
-                            const h_holiday_status = row.h_holiday_status;
-                            const h_start_date = toSqlDate(row.h_start_date);
-                            const h_end_date = toSqlDate(row.h_end_date);
+            let rows = [];
 
-                            const reqData = [
-                                h_name,
-                                h_holiday_status,
-                                h_start_date,
-                                h_end_date,
-                                e_id
-                            ];
-
-                            await HolidayModel.create(reqData);
-                        }
-
-                        // ลบไฟล์ชั่วคราวทิ้ง
-                        fs.unlinkSync(filePath);
-
-                        res.status(200).json({ status: Messages.ok, message: `Import สำเร็จ ${rows.length} รายการ` });
-                    } catch (err) {
-                        res.status(500).json({ status: Messages.error500, message: err.message });
-                    }
+            if (ext === ".csv") {
+                const csvParser = csv({
+                    mapHeaders: ({ header }) =>
+                        header?.replace(/^\uFEFF/, "").trim(), // ตัด BOM + trim
                 });
-        } catch (error) {
-            res.status(500).json({ status: Messages.error500, message: error.message });
+
+                await new Promise((resolve, reject) => {
+                    fs.createReadStream(filePath)
+                        .pipe(csvParser)
+                        .on("data", (row) => rows.push(row))
+                        .on("end", resolve)
+                        .on("error", reject);
+                });
+            } else if (ext === ".xlsx" || ext === ".xls") {
+                const workbook = xlsx.readFile(filePath, { cellDates: true });
+                const sheet = workbook.Sheets[workbook.SheetNames[0]];
+
+                rows = xlsx.utils.sheet_to_json(sheet, {
+                    defval: null,
+                    raw: true,
+                });
+            } else {
+                return res.status(400).json({
+                    status: "error",
+                    message: "รองรับเฉพาะไฟล์ CSV, XLS, XLSX",
+                });
+            }
+
+            for (const row of rows) {
+                const reqData = [
+                    row.h_name,
+                    row.h_holiday_status,
+                    toSqlDate(row.h_start_date),
+                    toSqlDate(row.h_end_date),
+                    e_id,
+                ];
+
+                console.log(reqData);
+                await HolidayModel.create(reqData);
+            }
+
+            fs.unlinkSync(filePath);
+
+            return res.status(200).json({
+                status: Messages.ok,
+                message: `Import สำเร็จ ${rows.length} รายการ`,
+            });
+        } catch (err) {
+            console.error(err);
+            return res.status(500).json({ status: Messages.error500, message: err.message });
         }
     }
 

@@ -11,5 +11,6 @@ router.get('/', holidayController.getHoliday)
 router.post('/', Auth.authenticateToken, holidayController.createHoliday)
 router.put('/:h_id', Auth.authenticateToken, holidayController.updateHoliday)
 router.delete('/:h_id', Auth.authenticateToken, holidayController.deleteHoliday)
-router.post('/import', upload.single('file'), holidayController.importHoliday);
+router.post('/import', Auth.authenticateToken, upload.single('file'), holidayController.importHoliday);
+
 module.exports = router

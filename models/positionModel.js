@@ -13,6 +13,18 @@ class PositionModel {
             throw error;
         }
     }
+
+    static async getPositionById(reqData) {
+        try {
+            const [result] = await db.query(`SELECT * FROM positions WHERE p_id = ? `, reqData);
+            return result[0] || null;
+        } catch (error) {
+            throw error;
+        }
+    }
+
+
+
     static async create(reqData) {
         try {
 

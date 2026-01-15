@@ -5,6 +5,7 @@ const FileUpload = require("../models/fileUploadModel");
 const path = require("path");
 const fs = require("fs").promises;
 const bcrypt = require('bcrypt');
+const logModel = require("../models/logsModlel");
 
 
 class EmployeeController {
@@ -27,7 +28,7 @@ class EmployeeController {
             }
 
             delete user.e_password;
-            const token = jwt.sign({ userId: user.e_id, username: user.e_firstname_en, status: user.r_role, r_id: user.r_id }, process.env.JWT_SECRET, { expiresIn: '24h' });
+            const token = jwt.sign({ userId: user.e_id, username: user.e_firstname_th, code: user.e_usercode, status: user.r_role, r_id: user.r_id }, process.env.JWT_SECRET, { expiresIn: '24h' });
 
             return res.status(200).json({ status: "ok", message: "เข้าสู่ระบบสำเร็จ", data: user, token });
 
@@ -121,6 +122,10 @@ class EmployeeController {
                 e_incise, e_parent_id, e_address, signaturePath, e_degree, e_idcard, resignDate]
 
             const employee = await EmployeeModel.create(reqData)
+            // log
+            const logData = [`คุณ${req.user.username} ID: ${req.user.code} เพิ่มข้อมูล คุณ ${e_firstname_th} เข้าสู่ระบบเรียบร้อยแล้ว`, 'Employee']
+            await logModel.create(logData)
+
             res.status(200).json({ status: Messages.ok, message: Messages.insertSuccess, data: employee })
         } catch (error) {
             if (error.code === "ER_DUP_ENTRY") {
@@ -200,7 +205,13 @@ class EmployeeController {
                 e_address, signaturePath, e_degree, e_idcard, ResignDate, e_id
             ];
             const employee = await EmployeeModel.update(reqData)
+
+            // log
+            const logData = [`คุณ${req.user.username} ID: ${req.user.code} แก้ไขข้อมูลของ คุณ ${e_firstname_th} เรียบร้อยแล้ว`, 'Employee']
+            await logModel.create(logData)
+
             res.status(200).json({ status: Messages.ok, message: Messages.updateSuccess, data: employee })
+
         } catch (error) {
             if (error.code === "ER_DUP_ENTRY") {
                 return res.status(409).json({ status: Messages.error, message: Messages.exists + req.body.e_usercode });
@@ -228,6 +239,9 @@ class EmployeeController {
                     console.log("ไม่พบไฟล์รูป ข้ามได้:", err.message);
                 }
             }
+            // log 
+            const logData = [`คุณ${req.user.username} ID: ${req.user.code} ลบข้อมูล คุณ ${fileImage.e_firstname_th} เรียบร้อยแล้ว`, 'Employee']
+            await logModel.create(logData)
 
             const employee = await EmployeeModel.delete(reqData)
             res.status(200).json({ status: Messages.ok, message: Messages.deleteSuccess, data: employee })
@@ -320,7 +334,6 @@ class EmployeeController {
             if (!employee) {
                 return res.status(403).json({ status: Messages.error, message: Messages.idNotFound })
             }
-
 
             const { e_password, e_parent_id, add_name, upd_name, sup_p_id, sup_firstname, sup_p_name_en, sup_p_name_th, ...safeEmplooyee } = employee;
 

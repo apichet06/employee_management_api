@@ -13,6 +13,17 @@ class logModel {
 
     }
 
+    static async create(reqData) {
+        try {
+            const [result] = await db.query(`INSERT INTO logs (l_details, l_features) VALUES (?, ?)`, reqData
+            );
+            return result;
+
+        } catch (error) {
+            throw error;
+        }
+    }
+
 }
 
 module.exports = logModel;

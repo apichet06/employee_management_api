@@ -1,5 +1,6 @@
 const Messages = require('../config/messages');
 const DeppartmentModel = require('../models/departmentModel');
+const logModel = require('../models/logsModlel');
 
 
 class DepartmentController {
@@ -20,6 +21,10 @@ class DepartmentController {
 
 
             const department = await DeppartmentModel.create(reqData)
+            // log
+            const logData = [`คุณ${req.user.username} ID: ${req.user.code} เพิ่มข้อมูลแผนก ${d_department_th} เรียบร้อยแล้ว`, 'Department']
+            await logModel.create(logData)
+
             res.status(200).json({ status: Messages.ok, message: Messages.insertSuccess, data: department })
         } catch (error) {
             if (error.code === "ER_DUP_ENTRY") {
@@ -36,6 +41,9 @@ class DepartmentController {
             const reqData = [d_department_en, d_department_th, d_department_ja, d_id]
 
             const department = await DeppartmentModel.update(reqData)
+            // log
+            const logData = [`คุณ${req.user.username} ID: ${req.user.code} แก้ไขข้อมูลแผนกใหม่เป็น ${d_department_th} เรียบร้อยแล้ว`, 'Department']
+            await logModel.create(logData)
 
             res.status(200).json({ status: Messages.ok, message: Messages.updateSuccess, data: department })
         } catch (error) {
@@ -50,6 +58,12 @@ class DepartmentController {
         try {
             const { d_id } = req.params
             const reqData = [d_id]
+
+            // log
+            const data = await DeppartmentModel.getDepartmentById(d_id)
+            const logData = [`คุณ${req.user.username} ID: ${req.user.code} ลบข้อมูลแผนก ${data.d_department_th} เรียบร้อยแล้ว`, 'Department']
+            await logModel.create(logData)
+
             const department = await DeppartmentModel.delete(reqData)
             res.status(200).json({ status: Messages.ok, message: Messages.deleteSuccess, data: department })
         } catch (error) {

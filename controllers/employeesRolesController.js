@@ -1,5 +1,6 @@
 const Messages = require("../config/messages");
 const employeeRolesModel = require("../models/employeeRolesModel");
+const logModel = require("../models/logsModlel");
 
 class employeesRolesController {
 
@@ -30,6 +31,12 @@ class employeesRolesController {
             const reqData = [r_id, w_id, e_id]
 
             const roles = await employeeRolesModel.create(reqData)
+            // @ts-ignore
+            const er_id = roles.insertId;
+            const data = await employeeRolesModel.getRolesById(er_id)
+
+            const logData = [`คุณ${req.user.username} ID: ${req.user.code} เพิ่มสิทธิ์เป็น ${data.r_role} ให้กับคุณ ${data.e_firstname_th} เข้าใช้งานเว็บไซต์ ${data.w_name} เรียบร้อยแล้ว`, `Employee Roles`]
+            await logModel.create(logData)
 
             res.status(200).json({ status: Messages.ok, message: Messages.insertSuccess, data: roles })
         } catch (error) {
@@ -46,6 +53,11 @@ class employeesRolesController {
             const reqData = [r_id, w_id, e_id, er_id]
 
             const roles = await employeeRolesModel.update(reqData)
+            const data = await employeeRolesModel.getRolesById(er_id)
+            const logData = [`คุณ${req.user.username} ID: ${req.user.code} แก้ไขสิทธิ์เป็น ${data.r_role} ให้กับคุณ ${data.e_firstname_th} เข้าใช้งานเว็บไซต์ ${data.w_name} เรียบร้อยแล้ว`, `Employee Roles`]
+            await logModel.create(logData)
+
+
             res.status(200).json({ status: Messages.ok, message: Messages.updateSuccess, data: roles })
 
         } catch (error) {
@@ -63,7 +75,14 @@ class employeesRolesController {
             const { er_id } = req.params
             const reqData = [er_id]
 
+            //log
+            const data = await employeeRolesModel.getRolesById(er_id)
+            const logData = [`คุณ${req.user.username} ID: ${req.user.code} ลบสิทธิ์เป็น ${data.r_role} ของคุณ ${data.e_firstname_th} เรียบร้อยแล้ว`, `Employee Roles`]
+
+            await logModel.create(logData)
             const roles = await employeeRolesModel.delete(reqData)
+
+
             res.status(200).json({ status: Messages.ok, message: Messages.deleteSuccess, data: roles })
 
         } catch (error) {

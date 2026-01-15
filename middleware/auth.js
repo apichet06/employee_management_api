@@ -20,7 +20,7 @@ class Auth {
                 return res.status(403).json({ status: Messages.error, message: Messages.invalidToken });
             }
             req.user = decoded;
-
+            // console.log("DECODED TOKEN =>", decoded);
             next();
         });
     }
