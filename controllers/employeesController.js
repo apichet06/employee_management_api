@@ -104,7 +104,6 @@ class EmployeeController {
                 //   แปลงเป็น '/' ให้เรียบร้อยก่อนเก็บลง DB
                 imagePath = uploadedPath.replace(/\\/g, '/');
 
-
             }
             if (signatureFile) {
                 const uploadedSignature = await FileUpload.uploadFile(signatureFile, `${e_usercode}_sign_${Date.now()}`, folder_signature);
@@ -129,7 +128,7 @@ class EmployeeController {
             res.status(200).json({ status: Messages.ok, message: Messages.insertSuccess, data: employee })
         } catch (error) {
             if (error.code === "ER_DUP_ENTRY") {
-                return res.status(409).json({ status: Messages.error, message: Messages.exists + req.body.e_usercode });
+                return res.status(409).json({ status: Messages.error, message: Messages.exists + req.body.e_firstname_en });
             }
 
             res.status(500).json({ status: Messages.error500, message: error.message });
@@ -189,7 +188,7 @@ class EmployeeController {
 
             const e_fullname_en = e_title_en + e_firstname_en + " " + e_lastname_en;
             const e_fullname_th = e_title_th + e_firstname_th + " " + e_lastname_th;
-            const e_fullname_ja = e_firstname_ja + " " + e_lastname_ja;
+            const e_fullname_ja = e_firstname_ja + "・" + e_lastname_ja;
             // const hashedPassword = await bcrypt.hash(oldWebsite.e_usercode, 10);
             const e_upd_name = req.user.userId;
             const e_upd_datetime = new Date();
@@ -222,38 +221,55 @@ class EmployeeController {
 
     static async deleteEmployee(req, res) {
         try {
-            const { e_id } = req.params
-            const reqData = [e_id]
+            const { e_id } = req.params;
+            const reqData = [e_id];
 
+            // 1) ดึงข้อมูลก่อน เพื่อเอา path รูป + ข้อมูลทำ log
             const fileImage = await EmployeeModel.getEmployeeById(reqData);
 
+            // 2) ลบข้อมูลใน DB ก่อน (ถ้าลบไม่สำเร็จ จะ throw ไป catch)
+            const employee = await EmployeeModel.delete(reqData);
+
+            // 3) ทำ log หลังลบสำเร็จ
+            const logData = [
+                `คุณ${req.user.username} ID: ${req.user.code} ลบข้อมูล คุณ ${fileImage.e_firstname_th} เรียบร้อยแล้ว`,
+                "Employee",
+            ];
+            await logModel.create(logData);
+
+            // 4) ลบไฟล์รูป "หลัง DB ลบสำเร็จแล้ว" (ลบไม่ได้ก็ไม่เป็นไร)
             const imageFile = fileImage?.e_image;
-
             if (imageFile) {
-                const fullPath = path.join(process.cwd(), "public", imageFile)
-
+                const fullPath = path.join(process.cwd(), "public", imageFile);
                 try {
                     await fs.unlink(fullPath);
                     console.log("ลบไฟล์รูปสำเร็จ");
                 } catch (err) {
-                    console.log("ไม่พบไฟล์รูป ข้ามได้:", err.message);
+                    console.log("ไม่พบไฟล์รูป / ลบไม่ได้ ข้ามได้:", err.message);
                 }
             }
-            // log 
-            const logData = [`คุณ${req.user.username} ID: ${req.user.code} ลบข้อมูล คุณ ${fileImage.e_firstname_th} เรียบร้อยแล้ว`, 'Employee']
-            await logModel.create(logData)
 
-            const employee = await EmployeeModel.delete(reqData)
-            res.status(200).json({ status: Messages.ok, message: Messages.deleteSuccess, data: employee })
+            const signatureFile = fileImage?.e_signature;
+            if (signatureFile) {
+                const fullPath = path.join(process.cwd(), "public", signatureFile);
+                try {
+                    await fs.unlink(fullPath);
+                    console.log("ลบไฟล์ลายเซ็นสำเร็จ");
+                } catch (err) {
+                    console.log("ไม่พบไฟล์ลายเซ็น / ลบไม่ได้ ข้ามได้:", err.message);
+                }
+            }
+
+            return res.status(200).json({ status: Messages.ok, message: Messages.deleteSuccess, data: employee });
         } catch (error) {
             if (error.code === "ER_ROW_IS_REFERENCED_2" || error.errno === 1451) {
                 return res.status(409).json({
-                    status: Messages.error, message: Messages.inUseCannotDelete, // "ข้อมูลนี้ถูกใช้อยู่ไม่สามารถลบได้"   
-                })
+                    status: Messages.error,
+                    message: Messages.inUseCannotDelete,
+                });
             }
-            res.status(500).json({ status: Messages.error500, message: error.message });
+            return res.status(500).json({ status: Messages.error500, message: error.message });
         }
-
     }
 
     static async getEmployeeAccount(req, res) {

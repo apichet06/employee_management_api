@@ -24,7 +24,8 @@ class HolidayController {
     }
     static async createHoliday(req, res) {
         try {
-            const { h_name, h_holiday_status, h_start_date, h_end_date, e_id } = req.body
+            const { h_name, h_holiday_status, h_start_date, h_end_date } = req.body
+            const e_id = req.user?.userId;
             const reqData = [h_name, h_holiday_status, h_start_date, h_end_date, e_id]
             const holiday = await HolidayModel.create(reqData)
             res.status(200).json({ status: Messages.ok, message: Messages.insertSuccess, holiday })
@@ -35,7 +36,8 @@ class HolidayController {
 
     static async updateHoliday(req, res) {
         try {
-            const { h_name, h_holiday_status, h_start_date, h_end_date, e_id, h_id } = req.body
+            const { h_name, h_holiday_status, h_start_date, h_end_date, h_id } = req.body
+            const e_id = req.user?.userId;
             const reqData = [h_name, h_holiday_status, h_start_date, h_end_date, e_id, h_id]
 
             const holiday = await HolidayModel.update(reqData)

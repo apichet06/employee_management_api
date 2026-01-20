@@ -18,7 +18,7 @@ class WebsiteModel {
     static async create(reqData) {
         try {
             const [result] = await db.query(
-                `INSERT INTO website (w_name,w_url,w_status,w_image,e_id) VALUES (?,?,?,?,?)`,
+                `INSERT INTO website (w_name,w_url,w_status,w_image,e_id,is_active) VALUES (?,?,?,?,?,?)`,
                 reqData
             );
             return result;
@@ -31,7 +31,7 @@ class WebsiteModel {
     static async update(reqData) {
         try {
 
-            const [result] = await db.query(`UPDATE website SET w_name = ?, w_url = ?, w_status = ?,e_id = ?, w_image = ? WHERE w_id = ?`, reqData
+            const [result] = await db.query(`UPDATE website SET w_name = ?, w_url = ?, w_status = ?,e_id = ?, w_image = ?, is_active = ? WHERE w_id = ?`, reqData
             );
             return result;
 

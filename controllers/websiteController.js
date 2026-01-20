@@ -20,7 +20,7 @@ class WebsiteController {
 
     static async createWebsite(req, res) {
         try {
-            const { w_name, w_url, w_status } = req.body;
+            const { w_name, w_url, w_status, is_active } = req.body;
             const e_id = req.user?.userId;
             const file = req.file;
             const folder = 'website';
@@ -42,7 +42,7 @@ class WebsiteController {
                 imagePath = uploadedPath.replace(/\\/g, '/');
             }
 
-            const reqData = [w_name, w_url, w_status, imagePath, e_id]
+            const reqData = [w_name, w_url, w_status, imagePath, e_id, is_active]
 
             const Website = await WebsiteModel.create(reqData)
 
@@ -56,11 +56,11 @@ class WebsiteController {
 
     static async updateWebsite(req, res) {
         try {
-            const { w_name, w_url, w_status, e_id } = req.body
+            const { w_name, w_url, w_status, is_active } = req.body
             const { w_id } = req.params
             const file = req.file;
             const folder = 'website';
-
+            const e_id = req.user?.userId;
             const oldWebsite = await WebsiteModel.getById(w_id);
             const oldImagePath = oldWebsite?.w_image || null;
             let imagePath = oldImagePath; // default = ใช้ของเก่าไปก่อน
@@ -79,7 +79,7 @@ class WebsiteController {
                 //   แปลงเป็น '/' ให้เรียบร้อยก่อนเก็บลง DB
                 imagePath = uploadedPath.replace(/\\/g, '/');
             }
-            const reqData = [w_name, w_url, w_status, e_id, imagePath, w_id]
+            const reqData = [w_name, w_url, w_status, e_id, imagePath, is_active, w_id]
 
             const Website = await WebsiteModel.update(reqData)
             if (Website)
@@ -94,12 +94,10 @@ class WebsiteController {
         try {
 
             const { w_id } = req.params
-
-
             const websiteImage = await WebsiteModel.getById(w_id);
+            const Website = await WebsiteModel.delete([w_id])
 
             const imageFile = websiteImage?.w_image;
-
             if (imageFile) {
                 const fullPath = path.join(process.cwd(), "public", imageFile)
                 // console.log("try delete:", fullPath); 
@@ -111,7 +109,6 @@ class WebsiteController {
                 }
             }
 
-            const Website = await WebsiteModel.delete([w_id])
             if (Website)
                 res.status(200).json({ status: Messages.ok, message: Messages.deleteSuccess, dasta: Website })
 

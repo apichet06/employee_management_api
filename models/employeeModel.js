@@ -90,7 +90,7 @@ class EmployeeModel {
     static async getEmployeeMaxId() {
         try {
 
-            const [rows] = await db.query(`SELECT MAX(CAST(RIGHT(e_usercode, 3) AS UNSIGNED)) AS max_suffix FROM employees`);
+            const [rows] = await db.query(`SELECT MAX(CAST(RIGHT(e_usercode, 3) AS UNSIGNED)) AS max_suffix FROM employees Where e_id not in(?,?)`, [261, 262]);
             return rows[0]?.max_suffix ?? null;
         } catch (error) {
             throw error;
