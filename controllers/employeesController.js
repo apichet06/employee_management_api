@@ -10,6 +10,15 @@ const logModel = require("../models/logsModlel");
 
 class EmployeeController {
 
+    static async getBrithday(req, res) {
+        try {
+            const employees = await EmployeeModel.getBrithdayEmployee()
+            res.status(200).json({ status: "ok", data: employees })
+        } catch (error) {
+            res.status(500).json({ status: Messages.error500, message: error.message })
+        }
+    }
+
     static async login(req, res) {
         try {
             const { usercode, password } = req.body;
@@ -358,6 +367,8 @@ class EmployeeController {
             res.status(500).json({ status: Messages.error500, message: error.message });
         }
     }
+
+
 }
 
 module.exports = EmployeeController;

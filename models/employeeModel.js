@@ -233,5 +233,16 @@ class EmployeeModel {
         }
     }
 
+    static async getBrithdayEmployee() {
+        try {
+            const [result] = await db.query(`SELECT e_firstname_th,e_lastname_th,e_fullname_th,e_birthday,b.d_department_en  From employees a
+                JOIN department b  ON a.d_id  = b.d_id
+                where e_status != ? and e_usercode not in(?, ?) and a.wp_id = ?`, [1, '999999', '999998', 1])
+            return result;
+        } catch (error) {
+            throw error;
+        }
+    }
+
 }
 module.exports = EmployeeModel

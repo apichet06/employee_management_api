@@ -7,6 +7,7 @@ const multer = require('multer');
 const upload = multer({ dest: 'public/uploads/' })
 
 router.post("/login", EmployeeController.login);
+router.get("/birthday", EmployeeController.getBrithday)
 router.get("/", Auth.authenticateToken, EmployeeController.getEmployeeAndResignAll); //ไม่แสดงคนลาออก
 router.get("/all", Auth.authenticateToken, EmployeeController.getEmployeeAll); // แสดงรวมคนลาออก
 router.post("/", Auth.authenticateToken, upload.fields([
@@ -22,5 +23,6 @@ router.put("/reset-password/:e_id", Auth.authenticateToken, EmployeeController.r
 router.get("/scan/:e_usercode", EmployeeController.getScanEmployeeById)
 router.put("/change-password/:e_id", Auth.authenticateToken, EmployeeController.setNewPassword)
 router.get("/:emp", Auth.authenticateToken, EmployeeController.getEmployeeAccount)
+
 
 module.exports = router
