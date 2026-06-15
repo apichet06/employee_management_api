@@ -1,6 +1,9 @@
 const Messages = require('../config/messages');
 const DeppartmentModel = require('../models/departmentModel');
+const FileUpload = require('../models/fileUploadModel');
 const logModel = require('../models/logsModlel');
+const fs = require('fs').promises;
+const path = require('path');
 
 
 class DepartmentController {
@@ -17,7 +20,16 @@ class DepartmentController {
     static async createDepartment(req, res) {
         try {
             const { d_department_en, d_department_th, d_department_ja } = req.body;
-            const reqData = [d_department_en, d_department_th, d_department_ja]
+            const file = req.file;
+            const folder = 'department';
+            let imagePath = null;
+
+            if (file) {
+                const uploadedPath = await FileUpload.uploadFile(file, `main_${Date.now()}`, folder);
+                imagePath = uploadedPath.replace(/\\/g, '/');
+            }
+
+            const reqData = [d_department_en, d_department_th, d_department_ja, imagePath]
 
 
             const department = await DeppartmentModel.create(reqData)
@@ -36,9 +48,31 @@ class DepartmentController {
 
     static async updateDepartment(req, res) {
         try {
-            const { d_department_en, d_department_th, d_department_ja, d_id } = req.body
+            const { d_department_en, d_department_th, d_department_ja } = req.body
+            const { d_id } = req.params
+            const file = req.file;
+            const folder = 'department';
 
-            const reqData = [d_department_en, d_department_th, d_department_ja, d_id]
+            const oldDepartment = await DeppartmentModel.getDepartmentById(d_id);
+            const oldImagePath = oldDepartment?.d_image || null;
+            let imagePath = oldImagePath;
+
+            if (file) {
+                if (oldImagePath) {
+                    const fullOldPath = path.join(process.cwd(), "public", oldImagePath);
+                    try {
+                        await fs.unlink(fullOldPath);
+                    } catch (err) {
+                        console.log("ลบรูปแผนกเก่าไม่ได้ (อาจไม่มีไฟล์):", err.message);
+                    }
+                }
+
+                const uploadedPath = await FileUpload.uploadFile(file, `main_${Date.now()}`, folder);
+                imagePath = uploadedPath.replace(/\\/g, '/');
+            }
+
+            const reqData = [d_department_en, d_department_th, d_department_ja, imagePath, d_id]
+
 
             const department = await DeppartmentModel.update(reqData)
             // log
@@ -65,6 +99,17 @@ class DepartmentController {
             await logModel.create(logData)
 
             const department = await DeppartmentModel.delete(reqData)
+
+            const imageFile = data?.d_image;
+            if (imageFile) {
+                const fullPath = path.join(process.cwd(), "public", imageFile);
+                try {
+                    await fs.unlink(fullPath);
+                } catch (err) {
+                    console.log("ไม่พบไฟล์รูปแผนก / ลบไม่ได้ ข้ามได้:", err.message);
+                }
+            }
+
             res.status(200).json({ status: Messages.ok, message: Messages.deleteSuccess, data: department })
         } catch (error) {
             if (error.code === "ER_ROW_IS_REFERENCED_2" || error.errno === 1451) {

@@ -28,7 +28,7 @@ class EmployeeModel {
         try {
             const [result] = await db.query(`SELECT
                             a.*,
-                            b.d_department_en, b.d_department_th,b.d_department_ja,
+                            b.d_department_en, b.d_department_th,b.d_department_ja,b.d_image,
                             c.p_name_th AS emp_p_name_th,c.p_name_en AS emp_p_name_en,c.p_name_ja AS emp_p_name_ja,
                             d.wp_name_en, d.wp_name_th,d.wp_name_ja,
                             sup.e_firstname_en AS sup_firstname,
@@ -59,7 +59,7 @@ class EmployeeModel {
         try {
             const [result] = await db.query(`SELECT
                             a.*,
-                            b.d_department_en, b.d_department_th,b.d_department_ja,
+                            b.d_department_en, b.d_department_th,b.d_department_ja,b.d_image,
                             c.p_name_th AS emp_p_name_th,c.p_name_en AS emp_p_name_en,c.p_name_ja AS emp_p_name_ja,
                             d.wp_name_en, d.wp_name_th,d.wp_name_ja,
                             sup.e_firstname_en AS sup_firstname,
@@ -172,7 +172,7 @@ class EmployeeModel {
         try {
             const [result] = await db.query(`SELECT
                             a.*,
-                            b.d_department_en, b.d_department_th,b.d_department_ja,
+                            b.d_department_en, b.d_department_th,b.d_department_ja,b.d_image,
                             c.p_name_th AS emp_p_name_th,c.p_name_en AS emp_p_name_en,c.p_name_ja AS emp_p_name_ja,
                             d.wp_name_en, d.wp_name_th,d.wp_name_ja,
                             sup.e_firstname_en AS sup_firstname,

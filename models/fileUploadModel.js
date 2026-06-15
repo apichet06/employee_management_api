@@ -3,6 +3,11 @@ const path = require('path');
 
 
 class FileUpload {
+    /**
+     * @param {{ originalname: string, path: string }} file
+     * @param {string} keys
+     * @param {string} folder
+     */
     static async uploadFile(file, keys, folder) {
         const currentDate = new Date();
         const year = currentDate.getFullYear();

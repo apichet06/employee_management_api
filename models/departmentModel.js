@@ -27,6 +27,9 @@ class DeppartmentModel {
         }
     }
 
+    /**
+     * @param {number|string} reqData
+     */
     static async getDepartmentById(reqData) {
         try {
             const [result] = await db.query(`SELECT * FROM department WHERE d_id = ? `, reqData);
@@ -38,6 +41,9 @@ class DeppartmentModel {
 
 
 
+    /**
+     * @param {Array<string|null>} reqData
+     */
     static async create(reqData) {
         try {
 
@@ -45,7 +51,7 @@ class DeppartmentModel {
             reqData.push(NextId)
 
 
-            const [result] = await db.query('INSERT INTO department (d_department_en, d_department_th,d_department_ja, d_code) VALUES (?, ?, ?, ? )', reqData);
+            const [result] = await db.query('INSERT INTO department (d_department_en, d_department_th,d_department_ja, d_image, d_code) VALUES (?, ?, ?, ?, ? )', reqData);
             return result;
 
         } catch (error) {
@@ -53,10 +59,13 @@ class DeppartmentModel {
         }
     }
 
+    /**
+     * @param {Array<string|number|null>} reqData
+     */
     static async update(reqData) {
         try {
 
-            const [result] = await db.query(`UPDATE department SET d_department_en=?, d_department_th=?, d_department_ja=? WHERE d_id = ?`, reqData);
+            const [result] = await db.query(`UPDATE department SET d_department_en=?, d_department_th=?, d_department_ja=?, d_image=? WHERE d_id = ?`, reqData);
             return result;
 
         } catch (error) {
@@ -64,6 +73,9 @@ class DeppartmentModel {
         }
     }
 
+    /**
+     * @param {Array<number|string>} reqData
+     */
     static async delete(reqData) {
         try {
 
