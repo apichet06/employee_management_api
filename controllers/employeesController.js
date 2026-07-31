@@ -22,7 +22,8 @@ class EmployeeController {
     static async login(req, res) {
         try {
             const { usercode, password } = req.body;
-            const user = await EmployeeModel.findByUserLogin(usercode);
+            const { websiteId } = req.params;
+            const user = await EmployeeModel.findByUserLogin(usercode, websiteId);
             if (!user) {
                 return res.status(404).json({ status: Messages.error, message: Messages.userNotFound });
             }

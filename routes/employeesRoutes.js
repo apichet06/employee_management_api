@@ -6,7 +6,7 @@ const router = express.Router()
 const multer = require('multer');
 const upload = multer({ dest: 'public/uploads/' })
 
-router.post("/login", EmployeeController.login);
+router.post("/login/:websiteId", EmployeeController.login);
 router.get("/birthday", EmployeeController.getBrithday)
 router.get("/", Auth.authenticateToken, EmployeeController.getEmployeeAndResignAll); //ไม่แสดงคนลาออก
 router.get("/all", Auth.authenticateToken, EmployeeController.getEmployeeAll); // แสดงรวมคนลาออก

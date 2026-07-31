@@ -2,10 +2,17 @@ const db = require("../config/db");
 
 class EmployeeModel {
 
-    static async findByUserLogin(usercode) {
+    static async findByUserLogin(usercode, websiteId) {
 
         try {
-            const [result] = await db.query(`SELECT a.*,c.w_name,d.e_fullname_en,d.e_usercode,d.e_password,b.r_role,b.r_id,
+            const [userRoles] = await db.query(`
+                        SELECT a.w_id FROM employee_roles  a
+                        inner join employees b on a.e_id = b.e_id
+                        Where b.e_usercode  = ? and a.w_id = ?`, [usercode, websiteId])
+            const w_id = userRoles[0]?.w_id ?? null;
+
+
+            let sql = `SELECT a.*,c.w_name,d.e_fullname_en,d.e_usercode,d.e_password,b.r_role,b.r_id,
                 e.d_department_en,d_department_th,f.p_name_en,f.p_name_th,d.e_image,d.e_email,d.e_id as e_id,g.wp_name_th,g.wp_id,d.d_id,d.e_status,d.e_firstname_th
                 FROM employee_roles a
                 RIGHT JOIN roles b ON a.r_id = b.r_id
@@ -14,7 +21,15 @@ class EmployeeModel {
                 RIGHT JOIN department e ON d.d_id = e.d_id
                 RIGHT JOIN positions f ON d.p_id = f.p_id
                 INNER JOIN workplace g ON g.wp_id = d.wp_id
-                Where d.e_usercode = ? LIMIT 1`, [usercode])
+                Where d.e_usercode = ?`
+            const params = [usercode];
+            if (w_id !== null) {
+                sql += ` and a.w_id = ?`
+                params.push(w_id);
+            }
+            sql += ` LIMIT 1`
+
+            const [result] = await db.query(sql, params)
 
             return result[0] || null;
 
