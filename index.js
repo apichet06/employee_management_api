@@ -36,7 +36,7 @@ app.use("/api/safety", safetyRoutes);
 
 
 app.get('/', (req, res) => {
-    res.send('Hello World!')
+    res.send('Server Running!')
 })
 
 const port = process.env.PORT || 5000;
