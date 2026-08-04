@@ -12,7 +12,7 @@ class EmployeeModel {
             const w_id = userRoles[0]?.w_id ?? null;
 
 
-            let sql = `SELECT a.*,c.w_name,d.e_fullname_en,d.e_usercode,d.e_password,b.r_role,b.r_id,
+            let sql = `SELECT a.*,c.w_name,d.e_fullname_en,d.e_usercode,d.e_password,b.r_role,b.r_id,f.p_id,
                 e.d_department_en,d_department_th,f.p_name_en,f.p_name_th,d.e_image,d.e_email,d.e_id as e_id,g.wp_name_th,g.wp_id,d.d_id,d.e_status,d.e_firstname_th
                 FROM employee_roles a
                 RIGHT JOIN roles b ON a.r_id = b.r_id
