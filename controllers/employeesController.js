@@ -6,6 +6,7 @@ const path = require("path");
 const fs = require("fs").promises;
 const bcrypt = require('bcrypt');
 const logModel = require("../models/logsModlel");
+const { createScanToken, verifyScanToken } = require("../utils/scanToken");
 
 
 class EmployeeController {
@@ -79,6 +80,17 @@ class EmployeeController {
         } catch (error) {
             res.status(500).json({ status: Messages.error500, message: error.message })
         }
+    }
+
+    static async createScanTokens(req, res) {
+        const employeeCodes = req.body?.employeeCodes;
+        if (!Array.isArray(employeeCodes) || employeeCodes.length === 0 || employeeCodes.length > 1000) {
+            return res.status(400).json({ status: Messages.error, message: "employeeCodes ไม่ถูกต้อง" });
+        }
+
+        const uniqueCodes = [...new Set(employeeCodes.map(String).filter(Boolean))];
+        const data = Object.fromEntries(uniqueCodes.map((code) => [code, createScanToken(code)]));
+        return res.status(200).json({ status: Messages.ok, data });
     }
 
 
@@ -352,7 +364,11 @@ class EmployeeController {
 
     static async getScanEmployeeById(req, res) {
         try {
-            const { e_usercode } = req.params
+            const e_usercode = verifyScanToken(req.params.token)
+
+            if (!e_usercode) {
+                return res.status(403).json({ status: Messages.error, message: "QR token ไม่ถูกต้อง" })
+            }
 
 
             const employee = await EmployeeModel.getScanEmployeeByUsercode(e_usercode)

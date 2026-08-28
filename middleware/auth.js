@@ -24,6 +24,33 @@ class Auth {
             next();
         });
     }
+
+    static authorizeRoles(...roles) {
+        const allowedRoles = new Set(roles.map((role) => String(role).toLowerCase()));
+
+        return (req, res, next) => {
+            const role = String(req.user?.status ?? "").toLowerCase();
+            if (!allowedRoles.has(role)) {
+                return res.status(403).json({
+                    status: Messages.error,
+                    message: "คุณไม่มีสิทธิ์ดำเนินการนี้",
+                });
+            }
+            next();
+        };
+    }
+
+    static authorizeSelf(paramName = "e_id") {
+        return (req, res, next) => {
+            if (String(req.user?.userId) !== String(req.params[paramName])) {
+                return res.status(403).json({
+                    status: Messages.error,
+                    message: "คุณไม่มีสิทธิ์แก้ไขข้อมูลของผู้ใช้อื่น",
+                });
+            }
+            next();
+        };
+    }
 }
 
 module.exports = Auth;

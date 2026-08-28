@@ -11,7 +11,7 @@ const upload = multer({
 
 const routes = express.Router()
 
-routes.get('/', auth.authenticateToken, safetyController.getSafetyDocument)
-routes.post('/upload', auth.authenticateToken, upload.single('file'), safetyController.uploadSafetyDocument)
+routes.get('/', auth.authenticateToken, auth.authorizeRoles('admin', 'subadmin'), safetyController.getSafetyDocument)
+routes.post('/upload', auth.authenticateToken, auth.authorizeRoles('admin', 'subadmin'), upload.single('file'), safetyController.uploadSafetyDocument)
 
 module.exports = routes

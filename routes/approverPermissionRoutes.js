@@ -5,9 +5,9 @@ const ApproverPermissionContoller = require('../controllers/approverPermissionCo
 const router = express.Router()
 
 
-router.get('/', Auth.authenticateToken, ApproverPermissionContoller.getApproverPermission)
-router.post('/', Auth.authenticateToken, ApproverPermissionContoller.createApproverPermission)
-router.put('/:ap_id', Auth.authenticateToken, ApproverPermissionContoller.updateApproverPermission)
-router.delete('/:ap_id', Auth.authenticateToken, ApproverPermissionContoller.deleteApproverPermission)
+router.get('/', Auth.authenticateToken, Auth.authorizeRoles('admin'), ApproverPermissionContoller.getApproverPermission)
+router.post('/', Auth.authenticateToken, Auth.authorizeRoles('admin'), ApproverPermissionContoller.createApproverPermission)
+router.put('/:ap_id', Auth.authenticateToken, Auth.authorizeRoles('admin'), ApproverPermissionContoller.updateApproverPermission)
+router.delete('/:ap_id', Auth.authenticateToken, Auth.authorizeRoles('admin'), ApproverPermissionContoller.deleteApproverPermission)
 
 module.exports = router;

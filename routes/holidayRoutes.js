@@ -8,9 +8,9 @@ const upload = multer({ dest: 'public/uploads/' });
 
 
 router.get('/', holidayController.getHoliday)
-router.post('/', Auth.authenticateToken, holidayController.createHoliday)
-router.put('/:h_id', Auth.authenticateToken, holidayController.updateHoliday)
-router.delete('/:h_id', Auth.authenticateToken, holidayController.deleteHoliday)
-router.post('/import', Auth.authenticateToken, upload.single('file'), holidayController.importHoliday);
+router.post('/', Auth.authenticateToken, Auth.authorizeRoles('admin', 'subadmin'), holidayController.createHoliday)
+router.put('/:h_id', Auth.authenticateToken, Auth.authorizeRoles('admin', 'subadmin'), holidayController.updateHoliday)
+router.delete('/:h_id', Auth.authenticateToken, Auth.authorizeRoles('admin', 'subadmin'), holidayController.deleteHoliday)
+router.post('/import', Auth.authenticateToken, Auth.authorizeRoles('admin', 'subadmin'), upload.single('file'), holidayController.importHoliday);
 
 module.exports = router

@@ -5,6 +5,6 @@ const Auth = require('../middleware/auth');
 const LogsController = require('../controllers/logsController');
 
 
-router.get("/", Auth.authenticateToken, LogsController.lostList);
+router.get("/", Auth.authenticateToken, Auth.authorizeRoles("admin", "subadmin"), LogsController.lostList);
 
 module.exports = router;
