@@ -32,9 +32,7 @@ class NewsModel {
             const date = new Date();
 
             const [result] = await db.query(
-                `UPDATE news
-         SET n_title = ?, n_message = ?, n_datetime = ?
-         WHERE n_id = ?`,
+                `UPDATE news SET n_title = ?, n_message = ?, n_datetime = ?   WHERE n_id = ?`,
                 [title, message, date, id]
             );
             return result;
