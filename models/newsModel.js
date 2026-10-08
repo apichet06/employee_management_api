@@ -28,8 +28,14 @@ class NewsModel {
 
     static async update(reqData) {
         try {
+            const [title, message, id] = reqData;
             const date = new Date();
-            const [result] = await db.query(`UPDATE news SET n_title = ?, n_message = ?, n_datetime = ? WHERE n_id = ?`, [...reqData, date]
+
+            const [result] = await db.query(
+                `UPDATE news
+         SET n_title = ?, n_message = ?, n_datetime = ?
+         WHERE n_id = ?`,
+                [title, message, date, id]
             );
             return result;
 
